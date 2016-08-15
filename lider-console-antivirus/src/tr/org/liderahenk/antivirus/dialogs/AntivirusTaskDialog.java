@@ -4,12 +4,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.eclipse.swt.widgets.Text;
 
+import tr.org.liderahenk.antivirus.constants.AntivirusConstants;
+import tr.org.liderahenk.antivirus.i18n.Messages;
 import tr.org.liderahenk.liderconsole.core.dialogs.DefaultTaskDialog;
 import tr.org.liderahenk.liderconsole.core.exceptions.ValidationException;
 
@@ -19,50 +24,75 @@ import tr.org.liderahenk.liderconsole.core.exceptions.ValidationException;
  */
 public class AntivirusTaskDialog extends DefaultTaskDialog {
 	
-	private static final Logger logger = LoggerFactory.getLogger(AntivirusTaskDialog.class);
+	private Label lblFolderPath;
+	private Text txtFolderPath;
+	private Label lblDescription;
 	
-	// TODO do not forget to change this constructor if SingleSelectionHandler is used!
 	public AntivirusTaskDialog(Shell parentShell, Set<String> dnSet) {
 		super(parentShell, dnSet);
 	}
 
+
 	@Override
 	public String createTitle() {
-		// TODO dialog title
-		return null;
+		return "Anlık Tarama Ekranı";
 	}
 
 	@Override
 	public Control createTaskDialogArea(Composite parent) {
-		// TODO create your task-related widgets here
+		
+
+		final Composite composite = new Composite(parent, SWT.NONE);
+		composite.setLayout(new GridLayout(2, false));
+		GridData  gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+		 gd.widthHint = SWT.DEFAULT;
+		 gd.heightHint = SWT.DEFAULT;
+		composite.setLayoutData( gd);
+		
+
+
+		lblFolderPath = new Label(composite, SWT.NONE);
+		lblFolderPath.setText(Messages.getString("FOLDER_PATH"));
+		
+		txtFolderPath = new Text(composite, SWT.BORDER);
+		txtFolderPath.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
+		final Composite desciptionComposite = new Composite(parent, SWT.NONE);
+		desciptionComposite.setLayout(new GridLayout(1, false));
+		
+		lblDescription = new Label(desciptionComposite, SWT.NONE);
+		lblDescription.setText(Messages.getString("FOLDER_PATH_DESCRIPTION"));
+		
 		return null;
 	}
 
 	@Override
 	public void validateBeforeExecution() throws ValidationException {
-		// TODO triggered before task execution
+		if(txtFolderPath == null || txtFolderPath.getText() == null ||  txtFolderPath.getText().isEmpty()){
+			throw new ValidationException(Messages.getString("ENTER_FOLDER_PATH"));
+		}
 	}
 	
 	@Override
 	public Map<String, Object> getParameterMap() {
-		// TODO custom parameter map
-		return new HashMap<String, Object>();
+		HashMap<String, Object> parameters = new HashMap<String, Object>();
+		parameters.put(AntivirusConstants.TASK_PARAMETERS.FOLDER_PATH, txtFolderPath.getText().toString());
+		return parameters;
 	}
 
 	@Override
 	public String getCommandId() {
-		// TODO command id which is used to match tasks with ICommand class in the corresponding Lider plugin
-		return "SAMPLE_COMMAND1";
+		return "INSTANT_SCAN";
 	}
 
 	@Override
 	public String getPluginName() {
-		return "antivirus";
+		return AntivirusConstants.PLUGIN_NAME;
 	}
 
 	@Override
 	public String getPluginVersion() {
-		return "1.0.0";
+		return AntivirusConstants.PLUGIN_VERSION;
 	}
 	
 }

@@ -79,7 +79,6 @@
 
 	<modules>
 		<module>lider-antivirus</module>
-		<module>lider-antivirus-db</module>
 		<module>lider-antivirus-feature</module>
 		<module>lider-console-antivirus</module>
 		<module>lider-console-antivirus-feature</module>

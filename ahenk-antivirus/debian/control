@@ -9,5 +9,5 @@ Homepage: http://www.liderahenk.org.tr
 Package: ahenk-antivirus
 Version: 1.0.0
 Architecture: any
-Depends: python3 (>= 3)
+Depends: python3 (>= 3), clamav, incron
 Description: Lider Ahenk ahenk-antivirus plugin

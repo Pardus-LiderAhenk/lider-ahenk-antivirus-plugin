@@ -1,39 +1,389 @@
 package tr.org.liderahenk.antivirus.dialogs;
 
+import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Spinner;
+import org.eclipse.swt.widgets.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import tr.org.liderahenk.antivirus.constants.AntivirusConstants;
 import tr.org.liderahenk.liderconsole.core.dialogs.IProfileDialog;
 import tr.org.liderahenk.liderconsole.core.exceptions.ValidationException;
 import tr.org.liderahenk.liderconsole.core.model.Profile;
+import tr.org.liderahenk.antivirus.i18n.Messages;
 
 public class AntivirusProfileDialog implements IProfileDialog {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(AntivirusProfileDialog.class);
-	
+	private Button chkIsRunning;
+	private Combo cmbIsRunning;
+	private Button chkUsbScanning;
+	private Combo cmbUsbScanning;
+	private Button chkExecutionFrequency;
+	private Spinner spnExecutionFrequency;
+	private Button chkUpdatingInterval;
+	private Spinner spnUpdatingInterval;
+	private Button chkScannedFolders;
+	private Text txtScannedFolders;
+	private Button chkScanDownloadedFiles;
+	private Combo cmbScanDownloadedFiles;
+	private Button chkFolderForDownloadedFiles;
+	private Text txtFolderForDownloadedFiles;
+//	private Label lblAntivirusVersion;
+//	private Text txtAntivirusVersion;
+	private String[] cmbContent = { "ON", "OFF" };
+
 	@Override
 	public void init() {
-		// TODO initialize 
 	}
-	
+
 	@Override
 	public void createDialogArea(Composite parent, Profile profile) {
-		// TODO create input widgets
+		logger.debug("Profile recieved: {}", profile != null ? profile.toString() : null);
+		createInputs(parent, profile);
 	}
-	
+
+	private void createInputs(Composite parent, Profile profile) {
+
+		Composite composite = new Composite(parent, SWT.NONE);
+		composite.setLayout(new GridLayout(2, false));
+		GridData gd = new GridData(SWT.FILL, SWT.FILL, false, true);
+		gd.widthHint = 600;
+		composite.setLayoutData(gd);
+
+		chkIsRunning = new Button(composite, SWT.CHECK);
+		chkIsRunning.setText(Messages.getString("ANTIVIRUS_STATUS"));
+		chkIsRunning.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (((Button) e.widget).getSelection()) {
+					cmbIsRunning.setEnabled(true);
+				} else {
+					cmbIsRunning.setEnabled(false);
+				}
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+
+		cmbIsRunning = new Combo(composite, SWT.BORDER | SWT.DROP_DOWN | SWT.READ_ONLY);
+		cmbIsRunning.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		for (int i = 0; i < cmbContent.length; i++) {
+			String i18n = Messages.getString(cmbContent[i]);
+			if (i18n != null && !i18n.isEmpty()) {
+				cmbIsRunning.add(i18n);
+				cmbIsRunning.setData(i + "", cmbContent[i]);
+			}
+		}
+
+		selectOption(cmbIsRunning, profile != null && profile.getProfileData() != null
+				? profile.getProfileData().get(AntivirusConstants.PARAMETERS.IS_RUNNING) : null);
+		if (profile != null && profile.getProfileData() != null
+				&& profile.getProfileData().get(AntivirusConstants.PARAMETERS.IS_RUNNING) != null) {
+			chkIsRunning.setSelection(true);
+			cmbIsRunning.setEnabled(true);
+		} else {
+			chkIsRunning.setSelection(false);
+			cmbIsRunning.setEnabled(false);
+		}
+
+		chkUsbScanning = new Button(composite, SWT.CHECK);
+		chkUsbScanning.setText(Messages.getString("USB_SCANNING"));
+		chkUsbScanning.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (((Button) e.widget).getSelection()) {
+					cmbUsbScanning.setEnabled(true);
+				} else {
+					cmbUsbScanning.setEnabled(false);
+				}
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+
+		cmbUsbScanning = new Combo(composite, SWT.BORDER | SWT.DROP_DOWN | SWT.READ_ONLY);
+		cmbUsbScanning.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		for (int i = 0; i < cmbContent.length; i++) {
+			String i18n = Messages.getString(cmbContent[i]);
+			if (i18n != null && !i18n.isEmpty()) {
+				cmbUsbScanning.add(i18n);
+				cmbUsbScanning.setData(i + "", cmbContent[i]);
+			}
+		}
+
+		selectOption(cmbUsbScanning, profile != null && profile.getProfileData() != null
+				? profile.getProfileData().get(AntivirusConstants.PARAMETERS.USB_SCANNING) : null);
+
+		if (profile != null && profile.getProfileData() != null
+				&& profile.getProfileData().get(AntivirusConstants.PARAMETERS.USB_SCANNING) != null) {
+			chkUsbScanning.setSelection(true);
+			cmbUsbScanning.setEnabled(true);
+		} else {
+			chkUsbScanning.setSelection(false);
+			cmbUsbScanning.setEnabled(false);
+		}
+
+		chkExecutionFrequency = new Button(composite, SWT.CHECK);
+		chkExecutionFrequency.setText(Messages.getString("EXECUTION_FREQUENCY"));
+		chkExecutionFrequency.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (((Button) e.widget).getSelection()) {
+					spnExecutionFrequency.setEnabled(true);
+				} else {
+					spnExecutionFrequency.setEnabled(false);
+				}
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+
+		spnExecutionFrequency = new Spinner(composite, SWT.BORDER);
+		spnExecutionFrequency.setMinimum(1);
+		spnExecutionFrequency.setMaximum(999);
+
+		if (profile != null && profile.getProfileData() != null
+				&& profile.getProfileData().get(AntivirusConstants.PARAMETERS.EXECUTION_FREQUENCY) != null) {
+			spnExecutionFrequency.setSelection(
+					(Integer) profile.getProfileData().get(AntivirusConstants.PARAMETERS.EXECUTION_FREQUENCY));
+		}
+
+		if (profile != null && profile.getProfileData() != null
+				&& profile.getProfileData().get(AntivirusConstants.PARAMETERS.EXECUTION_FREQUENCY) != null) {
+			chkExecutionFrequency.setSelection(true);
+			spnExecutionFrequency.setEnabled(true);
+		} else {
+			chkExecutionFrequency.setSelection(false);
+			spnExecutionFrequency.setEnabled(false);
+		}
+
+		chkUpdatingInterval = new Button(composite, SWT.CHECK);
+		chkUpdatingInterval.setText(Messages.getString("UPDATING_INTERVAL"));
+		chkUpdatingInterval.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (((Button) e.widget).getSelection()) {
+					spnUpdatingInterval.setEnabled(true);
+				} else {
+					spnUpdatingInterval.setEnabled(false);
+				}
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+
+		spnUpdatingInterval = new Spinner(composite, SWT.BORDER);
+		spnUpdatingInterval.setMinimum(1);
+		spnUpdatingInterval.setMaximum(999);
+
+		if (profile != null && profile.getProfileData() != null
+				&& profile.getProfileData().get(AntivirusConstants.PARAMETERS.UPDATING_INTERVAL) != null) {
+			spnUpdatingInterval.setSelection(
+					(Integer) profile.getProfileData().get(AntivirusConstants.PARAMETERS.UPDATING_INTERVAL));
+		}
+
+		if (profile != null && profile.getProfileData() != null
+				&& profile.getProfileData().get(AntivirusConstants.PARAMETERS.UPDATING_INTERVAL) != null) {
+			chkUpdatingInterval.setSelection(true);
+			spnUpdatingInterval.setEnabled(true);
+		} else {
+			chkUpdatingInterval.setSelection(false);
+			spnUpdatingInterval.setEnabled(false);
+		}
+
+		chkScannedFolders = new Button(composite, SWT.CHECK);
+		chkScannedFolders.setText(Messages.getString("SCANNED_FOLDERS"));
+		chkScannedFolders.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (((Button) e.widget).getSelection()) {
+					txtScannedFolders.setEnabled(true);
+				} else {
+					txtScannedFolders.setEnabled(false);
+				}
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+
+		txtScannedFolders = new Text(composite, SWT.BORDER);
+		txtScannedFolders.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		if (profile != null && profile.getProfileData() != null
+				&& profile.getProfileData().get(AntivirusConstants.PARAMETERS.SCANNED_FOLDERS) != null) {
+			txtScannedFolders
+					.setText((String) profile.getProfileData().get(AntivirusConstants.PARAMETERS.SCANNED_FOLDERS));
+			chkScannedFolders.setSelection(true);
+			txtScannedFolders.setEnabled(true);
+		} else {
+			txtScannedFolders.setEnabled(false);
+		}
+
+		chkScanDownloadedFiles = new Button(composite, SWT.CHECK);
+		chkScanDownloadedFiles.setText(Messages.getString("SCAN_DOWNLOADED_FILES"));
+		chkScanDownloadedFiles.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (((Button) e.widget).getSelection()) {
+					cmbScanDownloadedFiles.setEnabled(true);
+				} else {
+					cmbScanDownloadedFiles.setEnabled(false);
+				}
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+
+		cmbScanDownloadedFiles = new Combo(composite, SWT.BORDER | SWT.DROP_DOWN | SWT.READ_ONLY);
+		cmbScanDownloadedFiles.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		for (int i = 0; i < cmbContent.length; i++) {
+			String i18n = Messages.getString(cmbContent[i]);
+			if (i18n != null && !i18n.isEmpty()) {
+				cmbScanDownloadedFiles.add(i18n);
+				cmbScanDownloadedFiles.setData(i + "", cmbContent[i]);
+			}
+		}
+
+		selectOption(cmbScanDownloadedFiles, profile != null && profile.getProfileData() != null
+				? profile.getProfileData().get(AntivirusConstants.PARAMETERS.SCAN_DOWNLOADED_FILES) : null);
+
+		if (profile != null && profile.getProfileData() != null
+				&& profile.getProfileData().get(AntivirusConstants.PARAMETERS.SCAN_DOWNLOADED_FILES) != null) {
+			chkScanDownloadedFiles.setSelection(true);
+			cmbScanDownloadedFiles.setEnabled(true);
+		} else {
+			chkScanDownloadedFiles.setSelection(false);
+			cmbScanDownloadedFiles.setEnabled(false);
+		}
+
+		chkFolderForDownloadedFiles = new Button(composite, SWT.CHECK);
+		chkFolderForDownloadedFiles.setText(Messages.getString("FILE_FOR_DOWNLOADED_FILES"));
+		chkFolderForDownloadedFiles.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (((Button) e.widget).getSelection()) {
+					txtFolderForDownloadedFiles.setEnabled(true);
+				} else {
+					txtFolderForDownloadedFiles.setEnabled(false);
+				}
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+
+		txtFolderForDownloadedFiles = new Text(composite, SWT.BORDER);
+		txtFolderForDownloadedFiles.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		if (profile != null && profile.getProfileData() != null
+				&& profile.getProfileData().get(AntivirusConstants.PARAMETERS.FOLDER_FOR_DOWNLOADED_FILES) != null) {
+			txtFolderForDownloadedFiles.setText(
+					(String) profile.getProfileData().get(AntivirusConstants.PARAMETERS.FOLDER_FOR_DOWNLOADED_FILES));
+			chkFolderForDownloadedFiles.setSelection(true);
+			txtFolderForDownloadedFiles.setEnabled(true);
+		} else {
+			txtFolderForDownloadedFiles.setEnabled(false);
+		}
+
+//		lblAntivirusVersion = new Label(composite, SWT.BOLD);
+//		lblAntivirusVersion.setText(Messages.getString("ANTIVIRUS_VERSION"));
+//
+//		txtAntivirusVersion = new Text(composite, SWT.BORDER);
+//		txtAntivirusVersion.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+//		if (profile != null && profile.getProfileData() != null
+//				&& profile.getProfileData().get(AntivirusConstants.PARAMETERS.ANTIVIRUS_VERSION) != null) {
+//			txtAntivirusVersion
+//					.setText((String) profile.getProfileData().get(AntivirusConstants.PARAMETERS.ANTIVIRUS_VERSION));
+//		}
+	}
+
 	@Override
 	public Map<String, Object> getProfileData() throws Exception {
-		// TODO return profile data collected from the input widgets
-		return null;
+		Map<String, Object> profileData = new HashMap<String, Object>();
+		profileData.put(AntivirusConstants.PARAMETERS.IS_RUNNING,
+				chkIsRunning.getSelection() == true ? cmbIsRunning.getText() : null);
+		profileData.put(AntivirusConstants.PARAMETERS.USB_SCANNING,
+				chkUsbScanning.getSelection() == true ? cmbUsbScanning.getText() : null);
+		if (txtScannedFolders != null && !"".equals(txtScannedFolders.getText())) {
+			profileData.put(AntivirusConstants.PARAMETERS.SCANNED_FOLDERS,
+					chkScannedFolders.getSelection() == true ? txtScannedFolders.getText() : null);
+		}
+		profileData.put(AntivirusConstants.PARAMETERS.EXECUTION_FREQUENCY, chkExecutionFrequency.getSelection() == true
+				? spnExecutionFrequency.getSelection() : spnExecutionFrequency.getMinimum());
+		profileData.put(AntivirusConstants.PARAMETERS.UPDATING_INTERVAL, chkUpdatingInterval.getSelection() == true
+				? spnUpdatingInterval.getSelection() : spnUpdatingInterval.getMinimum());
+		profileData.put(AntivirusConstants.PARAMETERS.SCAN_DOWNLOADED_FILES, chkScanDownloadedFiles.getSelection() == true ? cmbScanDownloadedFiles.getText() : null);
+		if (txtFolderForDownloadedFiles != null && !"".equals(txtFolderForDownloadedFiles.getText())) {
+			profileData.put(AntivirusConstants.PARAMETERS.FOLDER_FOR_DOWNLOADED_FILES, chkFolderForDownloadedFiles.getSelection() == true ? 
+					txtFolderForDownloadedFiles.getText() : null);
+		}
+//		if (txtAntivirusVersion != null && !"".equals(txtAntivirusVersion.getText())) {
+//			profileData.put(AntivirusConstants.PARAMETERS.ANTIVIRUS_VERSION, txtAntivirusVersion.getText());
+//		}
+//		txtAntivirusVersion.setEnabled(false);
+		return profileData;
 	}
-	
+
 	@Override
 	public void validateBeforeSave() throws ValidationException {
-		// TODO Auto-generated method stub
-		
+		// if((chkScannedFolders.getSelection() && (txtScannedFolders.getText()
+		// == null || txtScannedFolders.getText().isEmpty())) ||
+		// (chkFolderForDownloadedFiles.getSelection() &&
+		// (txtFolderForDownloadedFiles.getText() == null ||
+		// txtFolderForDownloadedFiles.getText().isEmpty())) ||
+		// (txtAntivirusVersion.getText() == null ||
+		// txtAntivirusVersion.getText().isEmpty())){
+		// throw new ValidationException(Messages.getString("FILL_ALL_FIELDS"));
+		// }
 	}
-	
+
+	private boolean selectOption(Combo combo, Object value) {
+		if (value == null) {
+			combo.select(0);
+			return false;
+		}
+		String[] items = combo.getItems();
+		if (items == null) {
+			return false;
+		}
+		for (int i = 0; i < items.length; i++) {
+			if (items[i].equalsIgnoreCase(value.toString())) {
+				combo.select(i);
+				return true;
+			}
+		}
+		combo.select(0); // select first option by default.
+		return false;
+	}
+
 }

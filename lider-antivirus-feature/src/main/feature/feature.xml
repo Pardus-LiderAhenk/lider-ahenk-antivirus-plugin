@@ -30,7 +30,6 @@
 
     <feature name="lider-antivirus-bundles" version="${project.version}">
 		<bundle>mvn:tr.org.liderahenk/lider-antivirus/${project.version}</bundle>
-		<bundle>mvn:tr.org.liderahenk/lider-antivirus-db/${project.version}</bundle>
 		<configfile finalname="/etc/tr.org.liderahenk.antivirus.cfg">mvn:tr.org.liderahenk/lider-antivirus/${project.version}/cfg</configfile>
     </feature>
 

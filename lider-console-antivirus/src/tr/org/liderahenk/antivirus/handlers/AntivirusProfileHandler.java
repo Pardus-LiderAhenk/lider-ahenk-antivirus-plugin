@@ -30,10 +30,6 @@ public class AntivirusProfileHandler extends AbstractHandler {
         IWorkbenchPage page = window.getActivePage();
         
         try {
-			// Here we open default profile editor implementation so that all
-			// profiles can be handled by Lider Console Core.
-			// We also pass our profile dialog implementation as parameter to
-			// allow the editor use it dynamically.
 			page.openEditor(new ProfileEditorInput(Messages.getString("Antivirus"), AntivirusConstants.PLUGIN_NAME, 
 					AntivirusConstants.PLUGIN_VERSION, new AntivirusProfileDialog()), 
 					LiderConstants.EDITORS.PROFILE_EDITOR);

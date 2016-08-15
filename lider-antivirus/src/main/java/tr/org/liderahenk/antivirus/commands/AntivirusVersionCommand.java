@@ -15,9 +15,9 @@ import tr.org.liderahenk.lider.core.api.service.ICommandResult;
 import tr.org.liderahenk.lider.core.api.service.ICommandResultFactory;
 import tr.org.liderahenk.lider.core.api.service.enums.CommandResultStatus;
 
-public class AntivirusCommand implements ICommand {
+public class AntivirusVersionCommand implements ICommand {
 
-	private Logger logger = LoggerFactory.getLogger(AntivirusCommand.class);
+	private Logger logger = LoggerFactory.getLogger(AntivirusVersionCommand.class);
 	
 	private ICommandResultFactory resultFactory;
 	private IPluginInfo pluginInfo;
@@ -49,7 +49,7 @@ public class AntivirusCommand implements ICommand {
 
 	@Override
 	public String getCommandId() {
-		return "INSTANT_SCAN";
+		return "ANTIVIRUS_VERSION";
 	}
 
 	@Override
