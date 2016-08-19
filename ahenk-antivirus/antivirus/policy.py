@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-from base.model.enum.ContentType import ContentType
 from base.plugin.abstract_plugin import AbstractPlugin
 from base.util.util import Util
 import json
@@ -58,6 +57,11 @@ class Sample(AbstractPlugin):
 
     def handle_policy(self):
         try:
+            result_code, p_result, p_err = self.execute('rm /etc/incron.allow')
+            if self.is_exist('/var/log/clamavscanlog'):
+                self.create_file('/var/log/clamavscanlog')
+            if self.is_exist('/var/spool/incron/root') is False:
+                self.create_file('/var/spool/incron/root')
             if self.parameters['isRunning'] is not None and (
                     self.parameters['isRunning'] == 'Kapalı' or self.parameters['isRunning'] == 'Off'):
                 self.logger.debug('[ ANTIVIRUS ] Trying to stop clamav service')
@@ -92,12 +96,15 @@ class Sample(AbstractPlugin):
                     self.logger.debug('[ ANTIVIRUS ] Successfully Antivirus Cron frequency > ')
                     calismaaraligi = self.parameters['executionFrequency']
                     (result_code, p_out, p_err) = self.execute(self.script_file_path + 'DISABLED_antiviruscron.sh')
-                    bash_script = self.script_file_path + 'ENABLED_antiviruscron.sh ' + str(calismaaraligi)
-                    (result_code, p_out, p_err) = self.execute(bash_script)
-                    if result_code > 0:
-                        self.logger.debug("[ ANTIVIRUS ] ERROR ANTIVIRUS CRON FREQUENCY CHANGES " + p_err)
+                    if result_code == 0:
+                        bash_script = self.script_file_path + 'ENABLED_antiviruscron.sh ' + str(calismaaraligi)
+                        (result_code, p_out, p_err) = self.execute(bash_script)
+                        if result_code > 0:
+                            self.logger.debug("[ ANTIVIRUS ] ERROR ANTIVIRUS CRON FREQUENCY CHANGES " + p_err)
+                        else:
+                            self.logger.debug('[ ANTIVIRUS ] Successfully Antivirus Cron frequency changes')
                     else:
-                        self.logger.debug('[ ANTIVIRUS ] Successfully Antivirus Cron frequency changes')
+                        self.logger.debug('[ ANTIVIRUS ] Error Antivirus plugin in execution frequency option')
                 except Exception as e:
                     self.logger.debug('[ ANTIVIRUS ] Error Antivirus plugin '.format(str(e)))
 
@@ -107,12 +114,15 @@ class Sample(AbstractPlugin):
                 try:
                     update_frequency = self.parameters['updatingInterval']
                     (result_code, p_out, p_err) = self.execute(self.script_file_path + 'DISABLED_antivirusupdatecron.sh')
-                    bash_script = self.script_file_path + 'ENABLED_antivirusupdatecron.sh ' + str(update_frequency)
-                    (result_code, p_out, p_err) = self.execute(bash_script)
-                    if result_code > 0:
-                        self.logger.debug("[ ANTIVIRUS ] ERROR ANTIVIRUS CRON UPDATE FREQUENCY CHANGES ".format(p_err))
+                    if result_code == 0:
+                        bash_script = self.script_file_path + 'ENABLED_antivirusupdatecron.sh ' + str(update_frequency)
+                        (result_code, p_out, p_err) = self.execute(bash_script)
+                        if result_code > 0:
+                            self.logger.debug("[ ANTIVIRUS ] ERROR ANTIVIRUS CRON UPDATE FREQUENCY CHANGES ".format(p_err))
+                        else:
+                            self.logger.debug('[ ANTIVIRUS ] Successfully Antivirus Update frequency Cron changes')
                     else:
-                        self.logger.debug('[ ANTIVIRUS ] Successfully Antivirus Update frequency Cron changes')
+                        self.logger.debug('[ ANTIVIRUS ] Error Antivirus plugin in updating interval option')
                 except Exception as e:
                     self.logger.debug('[ ANTIVIRUS ] Error Antivirus plugin '.format(str(e)))
 
@@ -126,7 +136,7 @@ class Sample(AbstractPlugin):
                 for folder in foldersplit:
                     if Util.is_exist(folder):
                         self.execute('echo ' + folder + ' >> /etc/ahenk/antivirusscanfolder')
-                        tcommand = 'clamscan -r ' + folder + ' --log=/var/log/usbscanlog'
+                        tcommand = 'clamscan -r ' + folder + ' --log=/var/log/clamavscanlog'
                         tcommand2 = None
                         tcommand3 = None
                         try:
@@ -134,9 +144,6 @@ class Sample(AbstractPlugin):
                             terCommand.run()
                         except:
                             print("rerun")
-                            # self.log_plugin('antivirus '+str(folder)+' is scanned', None, 'INFO')
-                            # self.add_plugin_data('data',p_out)
-                            # self.log_plugin('scanning folder', None, 'INFO')
                     else:
                         self.logger.debug('[ ANTIVIRUS ]  ! Not Scaned ! Path not exists ' + str(folder), None, "INFO")
 
@@ -173,7 +180,7 @@ class Sample(AbstractPlugin):
                 for folder in foldersplit:
                     self.execute('echo ' + folder + ' >> /etc/ahenk/antiviruswatchfolder')
                     self.execute(
-                        'echo ' + folder + ' IN_CREATE {}downloadscan.sh \$\@\$\# Download  >> /var/spool/incron/root'.format(
+                        'echo ' + folder + ' IN_CREATE,IN_NO_LOOP {}downloadscan.sh \$\@ Download >> /var/spool/incron/root'.format(
                             self.script_file_path))
 
 
