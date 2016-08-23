@@ -39,26 +39,26 @@ import tr.org.liderahenk.liderconsole.core.xmpp.notifications.TaskStatusNotifica
  * 
  */
 public class AntivirusVersionTaskDialog extends DefaultTaskDialog {
-	
+
 	private Label lblVersion;
 	private Text txtVersion;
-	
+
 	public AntivirusVersionTaskDialog(Shell parentShell, String dn) {
 		super(parentShell, dn);
 		subscribeEventHandler(eventHandler);
 		getData();
 	}
-	
+
 	private void getData() {
 		try {
 			TaskRequest task = new TaskRequest(new ArrayList<String>(getDnSet()), DNType.AHENK, getPluginName(),
-					getPluginVersion(), "ANTIVIRUS_VERSION", null, null, new Date());
+					getPluginVersion(), "ANTIVIRUS_VERSION", null, null, null, new Date());
 			TaskRestUtils.execute(task);
 		} catch (Exception e1) {
 			Notifier.error(null, Messages.getString("ERROR_ON_EXECUTE"));
 		}
 	}
-	
+
 	private EventHandler eventHandler = new EventHandler() {
 		@Override
 		public void handleEvent(final Event event) {
@@ -72,7 +72,7 @@ public class AntivirusVersionTaskDialog extends DefaultTaskDialog {
 						byte[] data = taskStatus.getResult().getResponseData();
 						final Map<String, Object> responseData = new ObjectMapper().readValue(data, 0, data.length,
 								new TypeReference<HashMap<String, Object>>() {
-						});
+								});
 						Display.getDefault().asyncExec(new Runnable() {
 
 							@Override
@@ -105,25 +105,22 @@ public class AntivirusVersionTaskDialog extends DefaultTaskDialog {
 
 	@Override
 	public Control createTaskDialogArea(Composite parent) {
-		
 
 		final Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout(2, false));
-		GridData  gd = new GridData(SWT.FILL, SWT.FILL, true, true);
-		 gd.widthHint = SWT.DEFAULT;
-		 gd.heightHint = SWT.DEFAULT;
-		composite.setLayoutData( gd);
-		
-
+		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+		gd.widthHint = SWT.DEFAULT;
+		gd.heightHint = SWT.DEFAULT;
+		composite.setLayoutData(gd);
 
 		lblVersion = new Label(composite, SWT.NONE);
 		lblVersion.setText(Messages.getString("ANTIVIRUS_VERSION"));
-		
+
 		txtVersion = new Text(composite, SWT.BORDER);
 		txtVersion.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true));
-		
+
 		txtVersion.setEnabled(false);
-		
+
 		return null;
 	}
 
@@ -135,7 +132,7 @@ public class AntivirusVersionTaskDialog extends DefaultTaskDialog {
 	@Override
 	public void validateBeforeExecution() throws ValidationException {
 	}
-	
+
 	@Override
 	public Map<String, Object> getParameterMap() {
 		return null;
@@ -155,5 +152,5 @@ public class AntivirusVersionTaskDialog extends DefaultTaskDialog {
 	public String getPluginVersion() {
 		return AntivirusConstants.PLUGIN_VERSION;
 	}
-	
+
 }
