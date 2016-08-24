@@ -2,8 +2,6 @@
 # -*- coding: utf-8 -*-
 
 from base.plugin.abstract_plugin import AbstractPlugin
-from base.model.enum.ContentType import ContentType
-from base.util.util import Util
 
 
 class InstantScan(AbstractPlugin):
@@ -24,9 +22,9 @@ class InstantScan(AbstractPlugin):
             self.logger.debug('2')
             foldersplit = watchfolder.split(";")
             self.logger.debug('[ ANTIVIRUS ] Folder Path/(s) is parsed')
-            if Util.is_exist(self.script_file_path):
+            if self.is_exist(self.script_file_path):
                 for folder in foldersplit:
-                    if Util.is_exist(folder):
+                    if self.is_exist(folder):
                         result_code, result, error = self.execute(
                             '{0}downloadscan.sh {1} Instant'.format(self.script_file_path, folder))
                         if result_code > 0:

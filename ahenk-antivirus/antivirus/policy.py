@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 from base.plugin.abstract_plugin import AbstractPlugin
-from base.util.util import Util
 import json
 import fileinput
 import threading
@@ -34,15 +33,15 @@ class Sample(AbstractPlugin):
                 self.logger.debug('[ ANTIVIRUS ] Successfully created USB scan job')
 
     def append_to_policy_file(self, media_type):
-        if (not Util.is_exist(self.scan_media_file_path)) or (
-            media_type not in open(self.scan_media_file_path, 'r+').read()):
+        if (not self.is_exist(self.scan_media_file_path)) or (
+                    media_type not in open(self.scan_media_file_path, 'r+').read()):
             f = open(self.scan_media_file_path, 'a+')
             f.write(media_type + '\n')
             f.close()
         self.logger.debug('[ ANTIVIRUS ] Successfully appended ' + media_type + ' to ' + self.scan_media_file_path)
 
     def remove_from_policy_file(self, media_type):
-        if Util.is_exist(self.scan_media_file_path):
+        if self.is_exist(self.scan_media_file_path):
             for line in fileinput.input(self.scan_media_file_path, inplace=1):
                 if media_type not in line:
                     print
@@ -63,14 +62,14 @@ class Sample(AbstractPlugin):
             if self.is_exist('/var/spool/incron/root') is False:
                 self.create_file('/var/spool/incron/root')
             if self.parameters['isRunning'] is not None and (
-                    self.parameters['isRunning'] == 'Kapalı' or self.parameters['isRunning'] == 'Off'):
+                            self.parameters['isRunning'] == 'Kapalı' or self.parameters['isRunning'] == 'Off'):
                 self.logger.debug('[ ANTIVIRUS ] Trying to stop clamav service')
                 result_code, p_result, p_err = self.execute('service clamav-freshclam stop')
                 if result_code != 0:
                     self.logger.debug("[ ANTIVIRUS ] ERROR AT ANTIVIRUS SERVICE STATUS CHANGE " + p_err)
             # Start clamav
             if self.parameters['isRunning'] is not None and (
-                    self.parameters['isRunning'] == 'Açık' or self.parameters['isRunning'] == 'On'):
+                            self.parameters['isRunning'] == 'Açık' or self.parameters['isRunning'] == 'On'):
                 self.logger.debug('[ ANTIVIRUS ] Trying to start clamav service')
                 result_code, p_result, p_err = self.execute('service clamav-freshclam start')
                 if result_code != 0:
@@ -78,13 +77,13 @@ class Sample(AbstractPlugin):
 
             # Enable USB scanning
             if self.parameters['usbScanning'] is not None and (
-                    self.parameters['usbScanning'] == 'Açık' or self.parameters['usbScanning'] == 'On'):
+                            self.parameters['usbScanning'] == 'Açık' or self.parameters['usbScanning'] == 'On'):
                 self.logger.debug('[ ANTIVIRUS ] Trying to enable USB scan')
                 self.enable_usb_scan()
                 self.append_to_policy_file('usb')
             # Disable USB scanning
             if self.parameters['usbScanning'] is not None and (
-                    self.parameters['usbScanning'] == 'Kapalı' or self.parameters['usbScanning'] == 'Off'):
+                            self.parameters['usbScanning'] == 'Kapalı' or self.parameters['usbScanning'] == 'Off'):
                 self.logger.debug('[ ANTIVIRUS ] Trying to disable USB scan')
                 self.remove_cron_definition('usbscan')
                 self.remove_from_policy_file('usb')
@@ -113,12 +112,14 @@ class Sample(AbstractPlugin):
                 self.logger.debug('[ ANTIVIRUS ] Trying to change update frequency')
                 try:
                     update_frequency = self.parameters['updatingInterval']
-                    (result_code, p_out, p_err) = self.execute(self.script_file_path + 'DISABLED_antivirusupdatecron.sh')
+                    (result_code, p_out, p_err) = self.execute(
+                        self.script_file_path + 'DISABLED_antivirusupdatecron.sh')
                     if result_code == 0:
                         bash_script = self.script_file_path + 'ENABLED_antivirusupdatecron.sh ' + str(update_frequency)
                         (result_code, p_out, p_err) = self.execute(bash_script)
                         if result_code > 0:
-                            self.logger.debug("[ ANTIVIRUS ] ERROR ANTIVIRUS CRON UPDATE FREQUENCY CHANGES ".format(p_err))
+                            self.logger.debug(
+                                "[ ANTIVIRUS ] ERROR ANTIVIRUS CRON UPDATE FREQUENCY CHANGES ".format(p_err))
                         else:
                             self.logger.debug('[ ANTIVIRUS ] Successfully Antivirus Update frequency Cron changes')
                     else:
@@ -134,7 +135,7 @@ class Sample(AbstractPlugin):
                 self.logger.debug('[ ANTIVIRUS ] Scan folder: ' + scanfolder)
                 foldersplit = scanfolder.split(";")
                 for folder in foldersplit:
-                    if Util.is_exist(folder):
+                    if self.is_exist(folder):
                         self.execute('echo ' + folder + ' >> /etc/ahenk/antivirusscanfolder')
                         tcommand = 'clamscan -r ' + folder + ' --log=/var/log/clamavscanlog'
                         tcommand2 = None
@@ -149,20 +150,21 @@ class Sample(AbstractPlugin):
 
             # Enable download scanning
             if self.parameters['scanDownloadedFiles'] is not None and (
-                    self.parameters['scanDownloadedFiles'] == 'Açık' or self.parameters['scanDownloadedFiles'] == 'On'):
+                            self.parameters['scanDownloadedFiles'] == 'Açık' or self.parameters[
+                        'scanDownloadedFiles'] == 'On'):
                 self.logger.debug('[ ANTIVIRUS ] Trying to enable download scan')
-                if Util.is_exist('/etc/ahenk/antivirus.configuration') == True:
+                if self.is_exist('/etc/ahenk/antivirus.configuration') == True:
                     self.execute(
                         "sed -i '/scandownload:False/c\scandownload:True' /etc/ahenk/antivirus.configuration")
                 else:
                     self.execute('echo "scandownload:True" > /etc/ahenk/antivirus.configuration')
             # Disable download scanning
             if self.parameters['scanDownloadedFiles'] is not None and (
-                    self.parameters['scanDownloadedFiles'] == 'Kapalı' or self.parameters[
-                'scanDownloadedFiles'] == 'Off'):
+                            self.parameters['scanDownloadedFiles'] == 'Kapalı' or self.parameters[
+                        'scanDownloadedFiles'] == 'Off'):
                 self.logger.debug('[ ANTIVIRUS ] Trying to disable download scan')
                 self.remove_cron_definition('/Downloads')
-                if Util.is_exist('/etc/ahenk/antivirus.configuration') == True:
+                if self.is_exist('/etc/ahenk/antivirus.configuration') == True:
                     self.execute(
                         "sed -i '/scandownload:True/c\scandownload:False' /etc/ahenk/antivirus.configuration")
                 else:
@@ -171,7 +173,7 @@ class Sample(AbstractPlugin):
             # Watch folder
             if self.parameters['folderForDownloadedFiles'] is not None:
                 self.logger.debug('[ ANTIVIRUS ] Trying to configure watch folder')
-                if Util.is_exist('/etc/ahenk/antiviruswatchfolder') == True:
+                if self.is_exist('/etc/ahenk/antiviruswatchfolder') == True:
                     for line in open('/etc/ahenk/antiviruswatchfolder', 'r'):
                         self.remove_cron_definition(line.strip())
                 self.execute('echo -n "" > /etc/ahenk/antiviruswatchfolder')
@@ -182,7 +184,6 @@ class Sample(AbstractPlugin):
                     self.execute(
                         'echo ' + folder + ' IN_CREATE,IN_NO_LOOP {}downloadscan.sh \$\@ Download >> /var/spool/incron/root'.format(
                             self.script_file_path))
-
 
             # Get clamav configuration '/etc/clamav/freshclam.conf'
             self.context.create_response(code=self.message_code.POLICY_PROCESSED.value,
