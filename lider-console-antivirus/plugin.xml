@@ -69,6 +69,22 @@
                   commandId="tr.org.liderahenk.liderconsole.commands.AntivirusTask"
                   id="tr.org.liderahenk.liderconsole.commands.AntivirusTask"
                   tooltip="%command.task">
+                  	<visibleWhen>
+                  	<and>
+							<with
+				                variable="tr.org.liderahenk.liderconsole.core.sourceproviders.main.available">
+				             	<equals
+					                   value="true">
+					            </equals>
+				          	</with>
+							<with
+				                variable="tr.org.liderahenk.liderconsole.core.sourceproviders.main.isLdapUserSelected">
+				             	<equals
+					                   value="false">
+					            </equals>
+				          	</with>
+			          	</and>
+					</visibleWhen>
            		</command>
 		</menuContribution>
       
