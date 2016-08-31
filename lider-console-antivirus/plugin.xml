@@ -80,6 +80,22 @@
                   commandId="tr.org.liderahenk.liderconsole.commands.AntivirusVersionTask"
                   id="tr.org.liderahenk.liderconsole.commands.AntivirusVersionTask"
                   tooltip="%command.version.task">
+				  	<visibleWhen>
+				  		<and>
+							<with
+				                variable="tr.org.liderahenk.liderconsole.core.sourceproviders.main.isSingleEntrySelected">
+				             	<equals
+					                   value="true">
+					            </equals>
+				          	</with>
+							<with
+				                variable="tr.org.liderahenk.liderconsole.core.sourceproviders.main.isAhenkSelected">
+				             	<equals
+					                   value="true">
+					            </equals>
+				          	</with>
+			          	</and>
+					</visibleWhen>
            		</command>
 		</menuContribution>
   </extension>
