@@ -28,8 +28,8 @@ public class AntivirusTaskDialog extends DefaultTaskDialog {
 	private Text txtFolderPath;
 	private Label lblDescription;
 	
-	public AntivirusTaskDialog(Shell parentShell, Set<String> dnSet) {
-		super(parentShell, dnSet);
+	public AntivirusTaskDialog(Shell parentShell, Set<String> dnSet, boolean activation) {
+		super(parentShell, dnSet, activation);
 	}
 
 

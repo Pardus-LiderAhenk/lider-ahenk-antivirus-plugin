@@ -9,7 +9,7 @@ public class AntivirusVersionTaskHandler extends SingleSelectionHandler {
 
 	@Override
 	public void executeWithDn(String dn) {
-		AntivirusVersionTaskDialog dialog = new AntivirusVersionTaskDialog(Display.getDefault().getActiveShell(), dn);
+		AntivirusVersionTaskDialog dialog = new AntivirusVersionTaskDialog(Display.getDefault().getActiveShell(), dn, true);
 		dialog.create();
 		dialog.openWithEventBroker();
 	}

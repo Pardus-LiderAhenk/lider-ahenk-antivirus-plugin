@@ -43,8 +43,8 @@ public class AntivirusVersionTaskDialog extends DefaultTaskDialog {
 	private Label lblVersion;
 	private Text txtVersion;
 
-	public AntivirusVersionTaskDialog(Shell parentShell, String dn) {
-		super(parentShell, dn);
+	public AntivirusVersionTaskDialog(Shell parentShell, String dn, boolean activation) {
+		super(parentShell, dn, activation);
 		subscribeEventHandler(eventHandler);
 		getData();
 	}

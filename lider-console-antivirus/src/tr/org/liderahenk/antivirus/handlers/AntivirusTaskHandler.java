@@ -11,7 +11,7 @@ public class AntivirusTaskHandler extends MultipleSelectionHandler {
 	
 	@Override
 	public void executeWithDNSet(Set<String> dnSet) {
-		AntivirusTaskDialog dialog = new AntivirusTaskDialog(Display.getDefault().getActiveShell(), dnSet);
+		AntivirusTaskDialog dialog = new AntivirusTaskDialog(Display.getDefault().getActiveShell(), dnSet, true);
 		dialog.create();
 		dialog.open();
 	}
