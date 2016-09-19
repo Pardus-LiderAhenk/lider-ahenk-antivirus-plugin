@@ -11,8 +11,26 @@ class Init(AbstractPlugin):
         self.logger = self.get_logger()
 
     def handle_mode(self):
-        # TODO Do what do you want to do!
-        pass
+        try:
+            if self.is_installed('clamav') is False:
+                result_code, result, error = self.install_with_apt_get('clamav')
+                if result_code != 0:
+                    self.logger.error('[ANTIVIRUS - INIT] Package clamav can not be installed')
+                else:
+                    self.logger.debug("[ANTIVIRUS -INIT] Package clamav installed successfully")
+        except Exception as e:
+            self.logger.error(
+                '[ANTIVIRUS - INIT] Error while installing clamav package. Error message : {0}'.format(
+                    str(e)))
+        try:
+            result_code, result, error = self.execute('/etc/init.d/clamav start')
+            if result_code == 0:
+                self.logger.debug('[ANTIVIRUS - INIT] clamav service started successfully')
+            else:
+                self.logger.error('[ANTIVIRUS - INIT] clamav service could not be started - Error while executing /etc/init.d/clamav start command')
+        except Exception as e:
+            self.logger.error(
+                '[ANTIVIRUS - INIT] Error while starting clamav service. Error message : {0}'.format(str(e)))
 
 
 def handle_mode(context):
