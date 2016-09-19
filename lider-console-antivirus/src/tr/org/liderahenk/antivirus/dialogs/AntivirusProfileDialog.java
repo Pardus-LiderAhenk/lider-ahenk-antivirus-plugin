@@ -333,23 +333,20 @@ public class AntivirusProfileDialog implements IProfileDialog {
 	@Override
 	public Map<String, Object> getProfileData() throws Exception {
 		Map<String, Object> profileData = new HashMap<String, Object>();
-		profileData.put(AntivirusConstants.PARAMETERS.IS_RUNNING,
-				chkIsRunning.getSelection() == true ? cmbIsRunning.getText() : null);
-		profileData.put(AntivirusConstants.PARAMETERS.USB_SCANNING,
-				chkUsbScanning.getSelection() == true ? cmbUsbScanning.getText() : null);
-		if (txtScannedFolders != null && !"".equals(txtScannedFolders.getText())) {
-			profileData.put(AntivirusConstants.PARAMETERS.SCANNED_FOLDERS,
-					chkScannedFolders.getSelection() == true ? txtScannedFolders.getText() : null);
-		}
-		profileData.put(AntivirusConstants.PARAMETERS.EXECUTION_FREQUENCY, chkExecutionFrequency.getSelection() == true
-				? spnExecutionFrequency.getSelection() : spnExecutionFrequency.getMinimum());
-		profileData.put(AntivirusConstants.PARAMETERS.UPDATING_INTERVAL, chkUpdatingInterval.getSelection() == true
-				? spnUpdatingInterval.getSelection() : spnUpdatingInterval.getMinimum());
-		profileData.put(AntivirusConstants.PARAMETERS.SCAN_DOWNLOADED_FILES, chkScanDownloadedFiles.getSelection() == true ? cmbScanDownloadedFiles.getText() : null);
-		if (txtFolderForDownloadedFiles != null && !"".equals(txtFolderForDownloadedFiles.getText())) {
-			profileData.put(AntivirusConstants.PARAMETERS.FOLDER_FOR_DOWNLOADED_FILES, txtFolderForDownloadedFiles.getText() != null || txtFolderForDownloadedFiles.getText().length() == 0 ? 
-					txtFolderForDownloadedFiles.getText() : null);
-		}
+		if(chkIsRunning.getSelection())
+			profileData.put(AntivirusConstants.PARAMETERS.IS_RUNNING,cmbIsRunning.getText());
+		if(chkUsbScanning.getSelection())
+			profileData.put(AntivirusConstants.PARAMETERS.USB_SCANNING,cmbUsbScanning.getText());
+		if(chkScannedFolders.getSelection())
+			profileData.put(AntivirusConstants.PARAMETERS.SCANNED_FOLDERS, txtScannedFolders.getText());
+		if(chkExecutionFrequency.getSelection())
+			profileData.put(AntivirusConstants.PARAMETERS.EXECUTION_FREQUENCY, spnExecutionFrequency.getSelection());
+		if(chkUpdatingInterval.getSelection())
+			profileData.put(AntivirusConstants.PARAMETERS.UPDATING_INTERVAL, spnUpdatingInterval.getSelection());
+		if(chkScanDownloadedFiles.getSelection())
+			profileData.put(AntivirusConstants.PARAMETERS.SCAN_DOWNLOADED_FILES, cmbScanDownloadedFiles.getText());
+		if(chkScanDownloadedFiles.getSelection())
+			profileData.put(AntivirusConstants.PARAMETERS.FOLDER_FOR_DOWNLOADED_FILES, txtFolderForDownloadedFiles.getText());
 		return profileData;
 	}
 
