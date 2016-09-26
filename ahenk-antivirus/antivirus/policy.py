@@ -6,6 +6,7 @@ import json
 import fileinput
 import threading
 import subprocess
+import os.path
 
 
 class Sample(AbstractPlugin):
@@ -15,10 +16,11 @@ class Sample(AbstractPlugin):
         self.context = context
         self.logger = self.get_logger()
         self.parameters = json.loads(self.profile_data)
-        self.scan_media_file_path = '/etc/ahenk/antivirus.policy'
-        self.clamav_conf_file_path = '/etc/clamav/freshclam.conf'
+        self.plugin_path = os.path.abspath(os.path.join(os.path.dirname(__file__)))
+        self.scan_media_file_path = self.plugin_path + '/antivirus.policy'
+        self.clamav_conf_file_path = self.plugin_path + '/freshclam.conf'
         self.message_code = self.get_message_code()
-        self.script_file_path = '/opt/ahenk/plugins/antivirus/scripts/'
+        self.script_file_path = self.plugin_path + '/scripts/'
         self.result_message = ''
 
     def enable_usb_scan(self):
@@ -26,8 +28,8 @@ class Sample(AbstractPlugin):
         (result_code1, p_out1, p_err1) = self.execute('grep -c "mediascan" /var/spool/incron/root')
         if str(p_out1.strip()) == '0':
             (result_code, p_out, p_err) = self.execute(
-                'echo /dev IN_ATTRIB,IN_NO_LOOP {}mediascan.sh \$\#  >> /var/spool/incron/root'.format(
-                    self.script_file_path))
+                'echo /dev IN_ATTRIB,IN_NO_LOOP {0}mediascan.sh {1} {2} {3} \$\#  >> /var/spool/incron/root'.format(
+                    self.script_file_path, self.plugin_path, self.plugin_path, self.plugin_path))
             if result_code > 0:
                 self.logger.debug("[ ANTIVIRUS ] Couldn't create USB scan job".format(p_err))
             else:
@@ -91,7 +93,7 @@ class Sample(AbstractPlugin):
                 self.remove_cron_definition('usbscan')
                 self.remove_from_policy_file('usb')
 
-            # Change scan frequency
+                # Change scan frequency
             if 'executionFrequency' in self.parameters:
                 self.logger.debug('[ ANTIVIRUS ] Trying to change scan frequency')
                 try:
@@ -99,7 +101,7 @@ class Sample(AbstractPlugin):
                     calismaaraligi = self.parameters['executionFrequency']
                     (result_code, p_out, p_err) = self.execute(self.script_file_path + 'DISABLED_antiviruscron.sh')
                     if result_code == 0:
-                        bash_script = self.script_file_path + 'ENABLED_antiviruscron.sh ' + str(calismaaraligi)
+                        bash_script = self.script_file_path + 'ENABLED_antiviruscron.sh ' + str(calismaaraligi) + ' ' + self.script_file_path
                         (result_code, p_out, p_err) = self.execute(bash_script)
                         if result_code > 0:
                             self.logger.debug("[ ANTIVIRUS ] ERROR ANTIVIRUS CRON FREQUENCY CHANGES " + p_err)
@@ -121,7 +123,7 @@ class Sample(AbstractPlugin):
                     (result_code, p_out, p_err) = self.execute(
                         self.script_file_path + 'DISABLED_antivirusupdatecron.sh')
                     if result_code == 0:
-                        bash_script = self.script_file_path + 'ENABLED_antivirusupdatecron.sh ' + str(update_frequency)
+                        bash_script = self.script_file_path + 'ENABLED_antivirusupdatecron.sh ' + str(update_frequency) + ' ' + self.script_file_path
                         (result_code, p_out, p_err) = self.execute(bash_script)
                         if result_code > 0:
                             self.logger.debug(
@@ -136,16 +138,18 @@ class Sample(AbstractPlugin):
                     self.logger.debug('[ ANTIVIRUS ] Error Antivirus plugin '.format(str(e)))
                     self.result_message += 'Error Antivirus plugin '.format(str(e)) + '\r\n'
 
+
+
             # Scan folder
             if 'scannedFolders' in self.parameters:
                 self.logger.debug('[  ] Trying to configure scan folder')
-                self.execute('echo -n "" > /etc/ahenk/antivirusscanfolder')
+                self.execute('echo -n "" > {0}/antivirusscanfolder'.format(self.plugin_path))
                 scanfolder = self.parameters['scannedFolders']
                 self.logger.debug('[ ANTIVIRUS ] Scan folder: ' + scanfolder)
                 foldersplit = scanfolder.split(",")
                 for folder in foldersplit:
                     if self.is_exist(folder):
-                        self.execute('echo ' + folder + ' >> /etc/ahenk/antivirusscanfolder')
+                        self.execute('echo ' + folder + ' >> {0}/antivirusscanfolder'.format(self.plugin_path))
                         tcommand = 'clamscan -r ' + folder + ' --log=/var/log/clamavscanlog'
                         tcommand2 = None
                         tcommand3 = None
@@ -163,35 +167,35 @@ class Sample(AbstractPlugin):
                             self.parameters['scanDownloadedFiles'] == 'Açık' or self.parameters[
                         'scanDownloadedFiles'] == 'On'):
                 self.logger.debug('[ ANTIVIRUS ] Trying to enable download scan')
-                if self.is_exist('/etc/ahenk/antivirus.configuration') == True:
+                if self.is_exist('{0}/antivirus.configuration'.format(self.plugin_path)) == True:
                     self.execute(
-                        "sed -i '/scandownload:False/c\scandownload:True' /etc/ahenk/antivirus.configuration")
+                        "sed -i '/scandownload:False/c\scandownload:True' {0}/antivirus.configuration".format(self.plugin_path))
                 else:
-                    self.execute('echo "scandownload:True" > /etc/ahenk/antivirus.configuration')
+                    self.execute('echo "scandownload:True" > {0}/antivirus.configuration'.format(self.plugin_path))
             # Disable download scanning
             if 'scanDownloadedFiles' in self.parameters and (
                             self.parameters['scanDownloadedFiles'] == 'Kapalı' or self.parameters[
                         'scanDownloadedFiles'] == 'Off'):
                 self.logger.debug('[ ANTIVIRUS ] Trying to disable download scan')
                 self.remove_cron_definition('/Downloads')
-                if self.is_exist('/etc/ahenk/antivirus.configuration') == True:
+                if self.is_exist('{0}/antivirus.configuration'.format(self.plugin_path)) == True:
                     self.execute(
-                        "sed -i '/scandownload:True/c\scandownload:False' /etc/ahenk/antivirus.configuration")
+                        "sed -i '/scandownload:True/c\scandownload:False' {0}/antivirus.configuration".format(self.plugin_path))
                 else:
-                    self.execute('echo "scandownload:False" > /etc/ahenk/antivirus.configuration')
+                    self.execute('echo "scandownload:False" > {0}/antivirus.configuration'.format(self.plugin_path))
 
             # Watch folder
             if 'folderForDownloadedFiles' in self.parameters:
                 self.logger.debug('[ ANTIVIRUS ] Trying to configure watch folder')
-                if self.is_exist('/etc/ahenk/antiviruswatchfolder') == True:
-                    for line in open('/etc/ahenk/antiviruswatchfolder', 'r'):
+                if self.is_exist('{0}/antiviruswatchfolder'.format(self.plugin_path)) == True:
+                    for line in open('{0}/antiviruswatchfolder'.format(self.plugin_path), 'r'):
                         self.remove_cron_definition(line.strip())
-                self.execute('echo -n "" > /etc/ahenk/antiviruswatchfolder')
+                self.execute('echo -n "" > {0}/antiviruswatchfolder'.format(self.plugin_path))
                 watchfolder = self.parameters['folderForDownloadedFiles']
                 foldersplit = watchfolder.split(",")
                 for folder in foldersplit:
                     if self.is_exist(folder):
-                        self.execute('echo ' + folder + ' >> /etc/ahenk/antiviruswatchfolder')
+                        self.execute('echo ' + folder + ' >> {0}/antiviruswatchfolder'.format(self.plugin_path))
                         self.execute('echo ' + folder + ' IN_CREATE,IN_NO_LOOP {}downloadscan.sh \$\@ Download >> /var/spool/incron/root'.format(self.script_file_path))
                     else:
                         self.logger.debug("Path does not exist {0}".format(folder))

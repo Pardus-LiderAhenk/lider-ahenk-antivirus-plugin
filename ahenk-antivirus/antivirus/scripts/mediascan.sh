@@ -7,7 +7,7 @@ then
     echo "Media Tipi -> $disktype" >> /var/log/clamavscanlog
     if [[ "$disktype" == "floppy" ]]
     then
-        floppyScanState=$(grep -c "floppy" /etc/ahenk/antivirus.policy)
+        floppyScanState=$(grep -c "floppy" $1/antivirus.policy)
         if  [ $floppyScanState -eq 1 ]
         then
         	echo "Floppy Taramasi Yapiliyor... Bu işlem biraz zaman alacaktir...  ($1)" >> /var/log/clamavscanlog
@@ -24,7 +24,7 @@ then
 
     if [[ "$disktype" == "cd" ]]
     then
-	   cdromScanState=$(grep -c "cd" /etc/ahenk/antivirus.policy)
+	   cdromScanState=$(grep -c "cd" $2/antivirus.policy)
 	    if  [ $cdromScanState -eq 1 ]
 	    then
         	echo "CDROM Taramasi Başlatiliyor... Bu işlem biraz zaman alacaktir... ($1)" >> /var/log/clamavscanlog
@@ -46,7 +46,7 @@ then
 
     if [[ "$disktype" == "disk" ]]
     then
-	    diskScanState=$(grep -c "usb" /etc/ahenk/antivirus.policy)
+	    diskScanState=$(grep -c "usb" $3/antivirus.policy)
 	    if  [ $diskScanState -eq 1 ]
 	    then
         	echo " Disk Taraması Başlatılıyor... Bu işlem biraz zaman alacaktir... ($1)" >> /var/log/clamavscanlog

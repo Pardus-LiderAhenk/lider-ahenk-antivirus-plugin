@@ -343,10 +343,10 @@ public class AntivirusProfileDialog implements IProfileDialog {
 			profileData.put(AntivirusConstants.PARAMETERS.EXECUTION_FREQUENCY, spnExecutionFrequency.getSelection());
 		if(chkUpdatingInterval.getSelection())
 			profileData.put(AntivirusConstants.PARAMETERS.UPDATING_INTERVAL, spnUpdatingInterval.getSelection());
-		if(chkScanDownloadedFiles.getSelection())
+		if(chkScanDownloadedFiles.getSelection()){
 			profileData.put(AntivirusConstants.PARAMETERS.SCAN_DOWNLOADED_FILES, cmbScanDownloadedFiles.getText());
-		if(chkScanDownloadedFiles.getSelection())
 			profileData.put(AntivirusConstants.PARAMETERS.FOLDER_FOR_DOWNLOADED_FILES, txtFolderForDownloadedFiles.getText());
+		}
 		return profileData;
 	}
 

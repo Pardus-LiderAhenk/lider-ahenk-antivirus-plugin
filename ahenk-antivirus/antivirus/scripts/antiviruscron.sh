@@ -3,4 +3,4 @@
 while read -r line 
 do 
 	clamscan -irv $line --log=/var/log/clamavscanlog
-done < "/etc/ahenk/antivirusscanfolder"
+done < "/opt/ahenk/plugins/antivirus/antivirusscanfolder"
