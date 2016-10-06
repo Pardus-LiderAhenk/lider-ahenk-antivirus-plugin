@@ -45,10 +45,7 @@ class Sample(AbstractPlugin):
 
     def remove_from_policy_file(self, media_type):
         if self.is_exist(self.scan_media_file_path):
-            for line in fileinput.input(self.scan_media_file_path, inplace=1):
-                if media_type not in line:
-                    print
-                    line.strip()
+            self.execute('rm {0}'.format(self.scan_media_file_path))
         self.logger.debug('Successfully removed ' + media_type + ' from ' + self.scan_media_file_path)
 
     def remove_cron_definition(self, text):
