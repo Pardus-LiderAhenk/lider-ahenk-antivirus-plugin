@@ -49,10 +49,10 @@ class Sample(AbstractPlugin):
         self.logger.debug('Successfully removed ' + media_type + ' from ' + self.scan_media_file_path)
 
     def remove_cron_definition(self, text):
-        for line in fileinput.input('/var/spool/incron/root', inplace=1):
+        f = open('/var/spool/incron/root', 'w')
+        for line in f:
             if text not in line:
-                print
-                line.strip()
+                f.write(line.strip())
 
     def handle_policy(self):
         try:
