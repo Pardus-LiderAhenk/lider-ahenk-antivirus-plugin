@@ -21,17 +21,16 @@ class AntivirusVersion(AbstractPlugin):
             (result_code, p_out, p_err) = self.execute("clamscan -V")
             antivirus_version = str(p_out).strip()
             data = {'antivirusVersion': antivirus_version}
-            self.logger.debug('[ ANTIVIRUS ] clamav version: ' + antivirus_version)
+            self.logger.debug('clamav version: ' + antivirus_version)
             self.context.create_response(code=self.message_code.TASK_PROCESSED.value,
-                                         message='Antivirus Versiyonu başarıyla getirildi...', data=json.dumps(data),
+                                         message='Antivirus Versiyonu başarıyla getirildi.', data=json.dumps(data),
                                          content_type=self.get_content_type().APPLICATION_JSON.value)
         except Exception as e:
-            self.logger.debug('[ ANTIVIRUS ] Error while reading antivirus version: {}'.format(str(e)))
+            self.logger.debug('Error while reading antivirus version: {}'.format(str(e)))
             self.context.create_response(code=self.message_code.TASK_ERROR.value,
-                                         message='Antivirus Versiyonuna ulaşılırken beklenmedik hata...')
+                                         message='Antivirus versiyonuna ulaşılırken beklenmedik bir hata oluştu')
 
 
 def handle_task(task, context):
-    print('Antivirus Plugin Task')
     sample = AntivirusVersion(task, context)
     sample.handle_task()
