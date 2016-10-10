@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
-
+# Author: Cemre ALPSOY <cemre.alpsoy@agem.com.tr>
 from base.plugin.abstract_plugin import AbstractPlugin
 import json
 import fileinput
