@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
+# Author: Cemre ALPSOY <cemre.alpsoy@agem.com.tr>
 
 from base.plugin.abstract_plugin import AbstractPlugin
 import json
-import fileinput
 import threading
 import subprocess
 import os.path
@@ -140,7 +140,7 @@ class Sample(AbstractPlugin):
 
             # Scan folder
             if 'scannedFolders' in self.parameters:
-                self.logger.debug('[  ] Trying to configure scan folder')
+                self.logger.debug('Trying to configure scan folder')
                 self.execute('echo -n "" > {0}/antivirusscanfolder'.format(self.plugin_path))
                 scanfolder = self.parameters['scannedFolders']
                 self.logger.debug('Scan folder: ' + scanfolder)
@@ -152,8 +152,8 @@ class Sample(AbstractPlugin):
                         tcommand2 = None
                         tcommand3 = None
                         try:
-                            terCommand = ThreadCommand(tcommand, tcommand2, tcommand3)
-                            terCommand.run()
+                            ter_command = ThreadCommand(tcommand, tcommand2, tcommand3)
+                            ter_command.run()
                         except:
                             print("rerun")
                     else:
@@ -165,7 +165,7 @@ class Sample(AbstractPlugin):
                             self.parameters['scanDownloadedFiles'] == 'Açık' or self.parameters[
                         'scanDownloadedFiles'] == 'On'):
                 self.logger.debug('Trying to enable download scan')
-                if self.is_exist('{0}/antivirus.configuration'.format(self.plugin_path)) == True:
+                if self.is_exist('{0}/antivirus.configuration'.format(self.plugin_path)):
                     self.execute(
                         "sed -i '/scandownload:False/c\scandownload:True' {0}/antivirus.configuration".format(
                             self.plugin_path))
@@ -177,7 +177,7 @@ class Sample(AbstractPlugin):
                         'scanDownloadedFiles'] == 'Off'):
                 self.logger.debug('Trying to disable download scan')
                 self.remove_cron_definition('/Downloads')
-                if self.is_exist('{0}/antivirus.configuration'.format(self.plugin_path)) == True:
+                if self.is_exist('{0}/antivirus.configuration'.format(self.plugin_path)):
                     self.execute(
                         "sed -i '/scandownload:True/c\scandownload:False' {0}/antivirus.configuration".format(
                             self.plugin_path))
@@ -187,7 +187,7 @@ class Sample(AbstractPlugin):
             # Watch folder
             if 'folderForDownloadedFiles' in self.parameters:
                 self.logger.debug('Trying to configure watch folder')
-                if self.is_exist('{0}/antiviruswatchfolder'.format(self.plugin_path)) == True:
+                if self.is_exist('{0}/antiviruswatchfolder'.format(self.plugin_path)):
                     for line in open('{0}/antiviruswatchfolder'.format(self.plugin_path), 'r'):
                         self.remove_cron_definition(line.strip())
                 self.execute('echo -n "" > {0}/antiviruswatchfolder'.format(self.plugin_path))
