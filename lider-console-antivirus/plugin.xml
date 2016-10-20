@@ -57,18 +57,29 @@
  				<command
                   commandId="tr.org.liderahenk.liderconsole.commands.AntivirusProfile"
                   id="tr.org.liderahenk.liderconsole.commands.AntivirusProfile"
-                  tooltip="%command.profile">
+                  tooltip="%command.profile"
+                  icon="icons/16/antivirus.png">
            		</command>
+		</menuContribution>
+		
+		<menuContribution
+			locationURI="popup:tr.org.liderahenk.liderconsole.menus.ApplyTask?after=additions">
+			<menu
+				id="tr.org.liderahenk.liderconsole.menus.Antivirus"
+				label="%plugin.label"
+				icon="icons/16/antivirus.png">
+			</menu>
 		</menuContribution>
       
       	<!-- Add extension point contribution for "task execution" dialogs -->
 		<menuContribution
       		allPopups="false"
-            locationURI="popup:tr.org.liderahenk.liderconsole.menus.ApplyTask?after=additions">
+            locationURI="popup:tr.org.liderahenk.liderconsole.menus.Antivirus?after=additions">
  				<command
                   commandId="tr.org.liderahenk.liderconsole.commands.AntivirusTask"
                   id="tr.org.liderahenk.liderconsole.commands.AntivirusTask"
-                  tooltip="%command.task">
+                  tooltip="%command.task"
+                  icon="icons/16/antivirus.png">
                   	<visibleWhen>
                   	<and>
 							<with
@@ -97,11 +108,12 @@
       	<!-- Add extension point contribution for "task execution" dialogs -->
 		<menuContribution
       		allPopups="false"
-            locationURI="popup:tr.org.liderahenk.liderconsole.menus.ApplyTask?after=additions">
+            locationURI="popup:tr.org.liderahenk.liderconsole.menus.Antivirus?after=additions">
  				<command
                   commandId="tr.org.liderahenk.liderconsole.commands.AntivirusVersionTask"
                   id="tr.org.liderahenk.liderconsole.commands.AntivirusVersionTask"
-                  tooltip="%command.version.task">
+                  tooltip="%command.version.task"
+                  icon="icons/16/antivirus.png">
 				  	<visibleWhen>
 				  		<and>
 							<with
@@ -121,12 +133,14 @@
            		</command>
 		</menuContribution>
   </extension>
+  
   	<extension
          point="tr.org.liderahenk.liderconsole.core.i18n">
          <task code="INSTANT_SCAN" label="%command.task" />
          <task code="ANTIVIRUS_VERSION" label="%command.version.task" />
         <plugin name="antivirus" label="%plugin.label" />
      </extension>
+     
 	<!-- Add extension point contribution for "policy execution" dialogs -->
 	<extension
   		point="tr.org.liderahenk.liderconsole.core.policymenu">
