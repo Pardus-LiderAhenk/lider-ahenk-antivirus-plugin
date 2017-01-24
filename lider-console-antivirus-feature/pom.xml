@@ -8,7 +8,7 @@
 		<artifactId>antivirus</artifactId>
 		<version>1.0.0-beta</version>
 	</parent>
-
+	<version>1.0.0-SNAPSHOT</version>
 	<artifactId>lider-console-antivirus-feature</artifactId>
 	<name>lider-console-remote-access-feature</name>
 
