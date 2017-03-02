@@ -2,12 +2,13 @@
 if [[ $1 ==  "sd"* ]] || [[ $1 ==  "fd"*  ]] || [[ $1 ==  "sr"*  ]]
 then
     echo "Media Tipine Bakiliyor..." >> /var/log/clamavscanlog
+    echo $1 >> /var/log/clamavscanlog
     sleep 2
     disktype=$(udevadm info --name=/dev/$1 | grep ID_TYPE | cut -d "=" -f2)
     echo "Media Tipi -> $disktype" >> /var/log/clamavscanlog
     if [[ "$disktype" == "floppy" ]]
     then
-        floppyScanState=$(grep -c "floppy" $1/antivirus.policy)
+        floppyScanState=$(grep -c "floppy" $2/antivirus.policy)
         if  [ $floppyScanState -eq 1 ]
         then
         	echo "Floppy Taramasi Yapiliyor... Bu işlem biraz zaman alacaktir...  ($1)" >> /var/log/clamavscanlog
@@ -19,7 +20,7 @@ then
         	$(umount /tmp/$1)
         	$(rm -rf /tmp/$1)
         	echo "Floppy taramasi tamamlandi. Floppy mount ediliyor." >> /var/log/clamavscanlog
-        fi    
+        fi
      fi
 
     if [[ "$disktype" == "cd" ]]
@@ -46,7 +47,7 @@ then
 
     if [[ "$disktype" == "disk" ]]
     then
-	    diskScanState=$(grep -c "usb" $3/antivirus.policy)
+	    diskScanState=$(grep -c "usb" $2/antivirus.policy)
 	    if  [ $diskScanState -eq 1 ]
 	    then
         	echo " Disk Taraması Başlatılıyor... Bu işlem biraz zaman alacaktir... ($1)" >> /var/log/clamavscanlog

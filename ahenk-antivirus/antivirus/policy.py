@@ -27,8 +27,8 @@ class Sample(AbstractPlugin):
         (result_code1, p_out1, p_err1) = self.execute('grep -c "mediascan" /var/spool/incron/root')
         if str(p_out1.strip()) == '0':
             (result_code, p_out, p_err) = self.execute(
-                'echo /dev IN_ATTRIB,IN_NO_LOOP {0}mediascan.sh {1} {2} {3} \$\#  >> /var/spool/incron/root'.format(
-                    self.script_file_path, self.plugin_path, self.plugin_path, self.plugin_path))
+                'echo /dev IN_ATTRIB,IN_NO_LOOP {0}mediascan.sh \$\#  {1} >> /var/spool/incron/root'.format(
+                    self.script_file_path, self.plugin_path))
             if result_code > 0:
                 self.logger.debug('Couldn\'t create USB scan job'.format(p_err))
             else:
@@ -48,10 +48,38 @@ class Sample(AbstractPlugin):
         self.logger.debug('Successfully removed ' + media_type + ' from ' + self.scan_media_file_path)
 
     def remove_cron_definition(self, text):
-        f = open('/var/spool/incron/root', 'w')
-        for line in f:
-            if text not in line:
-                f.write(line.strip())
+        command = "sed --in-place '" + text.replace('/', '\/') + "/d' /var/spool/incron/root"
+        self.logger.debug(
+            "Removing cron definition which includes '" + text + "' text if exist in /var/spool/incron/root")
+        self.execute(command)
+        self.logger.debug("varsa sildim")
+
+    def scan_folder(self, folder):
+        result_code, folder_name, p_err = self.execute('echo {}'.format(folder))
+        self.logger.debug(result_code)
+        if result_code == 0:
+            self.execute('echo ' + folder + ' >> {0}/antivirusscanfolder'.format(self.plugin_path))
+            tcommand = 'clamscan -r ' + folder + ' --log=/var/log/clamavscanlog'
+            tcommand2 = None
+            tcommand3 = None
+            try:
+                ter_command = ThreadCommand(tcommand, tcommand2, tcommand3)
+                ter_command.run()
+            except:
+                print("rerun")
+        else:
+            self.logger.debug(' ! Not Scaned ! Path not exists ' + str(folder))
+            self.result_message += '! Not Scaned ! Path not exists ' + str(folder) + '\r\n'
+
+    def watch_folder(self, folder):
+        if self.is_exist(folder):
+            self.execute('echo ' + folder + ' >> {0}/antiviruswatchfolder'.format(self.plugin_path))
+            self.execute(
+                'echo ' + folder + ' IN_CREATE,IN_NO_LOOP {}downloadscan.sh \$\@ Download >> /var/spool/incron/root'.format(
+                    self.script_file_path))
+        else:
+            self.logger.debug("Path does not exist {0}".format(folder))
+            self.result_message += "Path does not exist {0}".format(folder) + '\r\n'
 
     def handle_policy(self):
         try:
@@ -86,7 +114,7 @@ class Sample(AbstractPlugin):
             if 'usbScanning' in self.parameters and (
                             self.parameters['usbScanning'] == 'Kapalı' or self.parameters['usbScanning'] == 'Off'):
                 self.logger.debug('Trying to disable USB scan')
-                self.remove_cron_definition('usbscan')
+                self.remove_cron_definition('/dev ')
                 self.remove_from_policy_file('usb')
 
                 # Change scan frequency
@@ -141,23 +169,21 @@ class Sample(AbstractPlugin):
             if 'scannedFolders' in self.parameters:
                 self.logger.debug('Trying to configure scan folder')
                 self.execute('echo -n "" > {0}/antivirusscanfolder'.format(self.plugin_path))
-                scanfolder = self.parameters['scannedFolders']
-                self.logger.debug('Scan folder: ' + scanfolder)
-                foldersplit = scanfolder.split(",")
-                for folder in foldersplit:
-                    if self.is_exist(folder):
-                        self.execute('echo ' + folder + ' >> {0}/antivirusscanfolder'.format(self.plugin_path))
-                        tcommand = 'clamscan -r ' + folder + ' --log=/var/log/clamavscanlog'
-                        tcommand2 = None
-                        tcommand3 = None
-                        try:
-                            ter_command = ThreadCommand(tcommand, tcommand2, tcommand3)
-                            ter_command.run()
-                        except:
-                            print("rerun")
+                scan_folder = self.parameters['scannedFolders']
+                folder_split = scan_folder.split(",")
+                for folder in folder_split:
+                    self.logger.debug('echo {}'.format(folder))
+                    self.logger.debug(folder)
+                    if "$USER" in folder:
+                        for user in self.Sessions.user_name():
+                            folder = folder.replace("$USER", user)
+                            self.logger.debug(folder)
+                            self.scan_folder(folder)
                     else:
-                        self.logger.debug(' ! Not Scaned ! Path not exists ' + str(folder))
-                        self.result_message += '! Not Scaned ! Path not exists ' + str(folder) + '\r\n'
+                        self.scan_folder(folder)
+            else:
+                if self.is_exist("{0}/antivirusscanfolder".format(self.plugin_path)):
+                    self.execute('echo -n "" > {0}/antivirusscanfolder'.format(self.plugin_path))
 
             # Enable download scanning
             if 'scanDownloadedFiles' in self.parameters and (
@@ -171,9 +197,7 @@ class Sample(AbstractPlugin):
                 else:
                     self.execute('echo "scandownload:True" > {0}/antivirus.configuration'.format(self.plugin_path))
             # Disable download scanning
-            if 'scanDownloadedFiles' in self.parameters and (
-                            self.parameters['scanDownloadedFiles'] == 'Kapalı' or self.parameters[
-                        'scanDownloadedFiles'] == 'Off'):
+            if 'scanDownloadedFiles' not in self.parameters:
                 self.logger.debug('Trying to disable download scan')
                 self.remove_cron_definition('/Downloads')
                 if self.is_exist('{0}/antivirus.configuration'.format(self.plugin_path)):
@@ -188,19 +212,29 @@ class Sample(AbstractPlugin):
                 self.logger.debug('Trying to configure watch folder')
                 if self.is_exist('{0}/antiviruswatchfolder'.format(self.plugin_path)):
                     for line in open('{0}/antiviruswatchfolder'.format(self.plugin_path), 'r'):
+                        self.logger.debug(line)
+                        self.logger.debug("stripped line : " + line)
                         self.remove_cron_definition(line.strip())
                 self.execute('echo -n "" > {0}/antiviruswatchfolder'.format(self.plugin_path))
                 watchfolder = self.parameters['folderForDownloadedFiles']
                 foldersplit = watchfolder.split(",")
                 for folder in foldersplit:
-                    if self.is_exist(folder):
-                        self.execute('echo ' + folder + ' >> {0}/antiviruswatchfolder'.format(self.plugin_path))
-                        self.execute(
-                            'echo ' + folder + ' IN_CREATE,IN_NO_LOOP {}downloadscan.sh \$\@ Download >> /var/spool/incron/root'.format(
-                                self.script_file_path))
+                    if "$USER" in folder:
+                        for user in self.Sessions.user_name():
+                            folder = folder.replace("$USER", user)
+                            self.logger.debug(folder)
+                            self.watch_folder(folder)
                     else:
-                        self.logger.debug("Path does not exist {0}".format(folder))
-                        self.result_message += "Path does not exist {0}".format(folder) + '\r\n'
+                        self.logger.debug(folder)
+                        self.watch_folder(folder)
+            else:
+                self.logger.debug('Trying to configure watch folder')
+                if self.is_exist('{0}/antiviruswatchfolder'.format(self.plugin_path)):
+                    for line in open('{0}/antiviruswatchfolder'.format(self.plugin_path), 'r'):
+                        self.logger.debug(line)
+                        self.logger.debug("stripped line : " + line.strip())
+                        self.remove_cron_definition(line.strip())
+                    self.delete_file('{0}/antiviruswatchfolder'.format(self.plugin_path))
             result_mes = 'Antivirus profili başarıyla uygulandı\r\n' + self.result_message
             # Get clamav configuration '/etc/clamav/freshclam.conf'
             self.context.create_response(code=self.message_code.POLICY_PROCESSED.value,
