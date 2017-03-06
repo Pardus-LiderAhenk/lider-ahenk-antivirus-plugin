@@ -20,8 +20,18 @@
       </command>
       <command
             categoryId="tr.org.liderahenk.liderconsole.commands.category"
+            id="tr.org.liderahenk.liderconsole.commands.AntivirusChangeConfigurationTask"            
+            name="%command.change.configuration.task">
+      </command>
+      <command
+            categoryId="tr.org.liderahenk.liderconsole.commands.category"
             id="tr.org.liderahenk.liderconsole.commands.AntivirusVersionTask"            
             name="%command.version.task">
+      </command>
+      <command
+            categoryId="tr.org.liderahenk.liderconsole.commands.category"
+            id="tr.org.liderahenk.liderconsole.commands.AntivirusConfigurationTask"            
+            name="%command.configuration.task">
       </command>
    </extension>
    
@@ -42,8 +52,20 @@
       	
       	<!-- Task handler -->
        <handler
+            class="tr.org.liderahenk.antivirus.handlers.AntivirusChangeConfigurationTaskHandler"
+            commandId="tr.org.liderahenk.liderconsole.commands.AntivirusChangeConfigurationTask">
+      </handler>
+      	
+      	<!-- Task handler -->
+       <handler
             class="tr.org.liderahenk.antivirus.handlers.AntivirusVersionTaskHandler"
             commandId="tr.org.liderahenk.liderconsole.commands.AntivirusVersionTask">
+      </handler>
+      	
+      	<!-- Task handler -->
+       <handler
+            class="tr.org.liderahenk.antivirus.handlers.AntivirusConfigurationTaskHandler"
+            commandId="tr.org.liderahenk.liderconsole.commands.AntivirusConfigurationTask">
       </handler>
       
   </extension>
@@ -132,12 +154,42 @@
 					</visibleWhen>
            		</command>
 		</menuContribution>
+		
+			<!-- Add extension point contribution for "task execution" dialogs -->
+		<menuContribution
+      		allPopups="false"
+            locationURI="popup:tr.org.liderahenk.liderconsole.menus.Antivirus?after=additions">
+ 				<command
+                  commandId="tr.org.liderahenk.liderconsole.commands.AntivirusConfigurationTask"
+                  id="tr.org.liderahenk.liderconsole.commands.AntivirusConfigurationTask"
+                  tooltip="%command.configuration.task"
+                  icon="icons/16/antivirus.png">
+				  	<visibleWhen>
+				  		<and>
+							<with
+				                variable="tr.org.liderahenk.liderconsole.core.sourceproviders.main.isSingleEntrySelected">
+				             	<equals
+					                   value="true">
+					            </equals>
+				          	</with>
+							<with
+				                variable="tr.org.liderahenk.liderconsole.core.sourceproviders.main.isAhenkSelected">
+				             	<equals
+					                   value="true">
+					            </equals>
+				          	</with>
+			          	</and>
+					</visibleWhen>
+           		</command>
+		</menuContribution>
   </extension>
   
   	<extension
          point="tr.org.liderahenk.liderconsole.core.i18n">
          <task code="INSTANT_SCAN" label="%command.task" />
          <task code="ANTIVIRUS_VERSION" label="%command.version.task" />
+         <task code="ANTIVIRUS_CONFIGURATION" label="%command.configuration.task" />
+         <task code="ANTIVIRUS_CHANGE_CONFIGURATION" label="%command.change.configuration.task" />
         <plugin name="antivirus" label="%plugin.label" />
      </extension>
      

@@ -37,10 +37,9 @@ public class AntivirusProfileDialog implements IProfileDialog {
 	private Button chkScannedFolders;
 	private Text txtScannedFolders;
 	private Button chkScanDownloadedFiles;
-	private Combo cmbScanDownloadedFiles;
-//	private Button chkFolderForDownloadedFiles;
 	private Text txtFolderForDownloadedFiles;
 	private Label lblFolderForDownloadedFiles;
+	private Label lblForDescription;
 	private String[] cmbContent = { "ON", "OFF" };
 
 	@Override
@@ -251,10 +250,10 @@ public class AntivirusProfileDialog implements IProfileDialog {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (((Button) e.widget).getSelection()) {
-					cmbScanDownloadedFiles.setEnabled(true);
+					// cmbScanDownloadedFiles.setEnabled(true);
 					txtFolderForDownloadedFiles.setEnabled(true);
 				} else {
-					cmbScanDownloadedFiles.setEnabled(false);
+					// cmbScanDownloadedFiles.setEnabled(false);
 					txtFolderForDownloadedFiles.setEnabled(false);
 				}
 			}
@@ -264,48 +263,19 @@ public class AntivirusProfileDialog implements IProfileDialog {
 			}
 		});
 
-		cmbScanDownloadedFiles = new Combo(composite, SWT.BORDER | SWT.DROP_DOWN | SWT.READ_ONLY);
-		cmbScanDownloadedFiles.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-		for (int i = 0; i < cmbContent.length; i++) {
-			String i18n = Messages.getString(cmbContent[i]);
-			if (i18n != null && !i18n.isEmpty()) {
-				cmbScanDownloadedFiles.add(i18n);
-				cmbScanDownloadedFiles.setData(i + "", cmbContent[i]);
-			}
-		}
-
-		selectOption(cmbScanDownloadedFiles, profile != null && profile.getProfileData() != null
-				? profile.getProfileData().get(AntivirusConstants.PARAMETERS.SCAN_DOWNLOADED_FILES) : null);
+		new Label(composite, SWT.NONE);
 
 		if (profile != null && profile.getProfileData() != null
 				&& profile.getProfileData().get(AntivirusConstants.PARAMETERS.SCAN_DOWNLOADED_FILES) != null) {
 			chkScanDownloadedFiles.setSelection(true);
-			cmbScanDownloadedFiles.setEnabled(true);
+			// cmbScanDownloadedFiles.setEnabled(true);
 		} else {
 			chkScanDownloadedFiles.setSelection(false);
-			cmbScanDownloadedFiles.setEnabled(false);
+			// cmbScanDownloadedFiles.setEnabled(false);
 		}
-		
+
 		lblFolderForDownloadedFiles = new Label(composite, SWT.NONE);
 		lblFolderForDownloadedFiles.setText(Messages.getString("FILE_FOR_DOWNLOADED_FILES"));
-
-//		chkFolderForDownloadedFiles = new Button(composite, SWT.CHECK);
-//		chkFolderForDownloadedFiles.setText(Messages.getString("FILE_FOR_DOWNLOADED_FILES"));
-//		chkFolderForDownloadedFiles.addSelectionListener(new SelectionListener() {
-//
-//			@Override
-//			public void widgetSelected(SelectionEvent e) {
-//				if (((Button) e.widget).getSelection()) {
-//					txtFolderForDownloadedFiles.setEnabled(true);
-//				} else {
-//					txtFolderForDownloadedFiles.setEnabled(false);
-//				}
-//			}
-//
-//			@Override
-//			public void widgetDefaultSelected(SelectionEvent e) {
-//			}
-//		});
 
 		txtFolderForDownloadedFiles = new Text(composite, SWT.BORDER);
 		txtFolderForDownloadedFiles.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
@@ -318,47 +288,40 @@ public class AntivirusProfileDialog implements IProfileDialog {
 			txtFolderForDownloadedFiles.setEnabled(false);
 		}
 
-//		lblAntivirusVersion = new Label(composite, SWT.BOLD);
-//		lblAntivirusVersion.setText(Messages.getString("ANTIVIRUS_VERSION"));
-//
-//		txtAntivirusVersion = new Text(composite, SWT.BORDER);
-//		txtAntivirusVersion.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-//		if (profile != null && profile.getProfileData() != null
-//				&& profile.getProfileData().get(AntivirusConstants.PARAMETERS.ANTIVIRUS_VERSION) != null) {
-//			txtAntivirusVersion
-//					.setText((String) profile.getProfileData().get(AntivirusConstants.PARAMETERS.ANTIVIRUS_VERSION));
-//		}
+		lblForDescription = new Label(parent, SWT.NONE);
+		lblForDescription.setText(Messages.getString("FOLDER_PATH_DESCRIPTION"));
 	}
 
 	@Override
 	public Map<String, Object> getProfileData() throws Exception {
+
 		Map<String, Object> profileData = new HashMap<String, Object>();
-		if(chkIsRunning.getSelection())
-			profileData.put(AntivirusConstants.PARAMETERS.IS_RUNNING,cmbIsRunning.getText());
-		if(chkUsbScanning.getSelection())
-			profileData.put(AntivirusConstants.PARAMETERS.USB_SCANNING,cmbUsbScanning.getText());
-		if(chkScannedFolders.getSelection())
+		if (chkIsRunning.getSelection())
+			profileData.put(AntivirusConstants.PARAMETERS.IS_RUNNING, cmbIsRunning.getText());
+		if (chkUsbScanning.getSelection())
+			profileData.put(AntivirusConstants.PARAMETERS.USB_SCANNING, cmbUsbScanning.getText());
+		if (chkScannedFolders.getSelection())
 			profileData.put(AntivirusConstants.PARAMETERS.SCANNED_FOLDERS, txtScannedFolders.getText());
-		if(chkExecutionFrequency.getSelection())
+		if (chkExecutionFrequency.getSelection())
 			profileData.put(AntivirusConstants.PARAMETERS.EXECUTION_FREQUENCY, spnExecutionFrequency.getSelection());
-		if(chkUpdatingInterval.getSelection())
+		if (chkUpdatingInterval.getSelection())
 			profileData.put(AntivirusConstants.PARAMETERS.UPDATING_INTERVAL, spnUpdatingInterval.getSelection());
-		if(chkScanDownloadedFiles.getSelection()){
-			profileData.put(AntivirusConstants.PARAMETERS.SCAN_DOWNLOADED_FILES, cmbScanDownloadedFiles.getText());
-			profileData.put(AntivirusConstants.PARAMETERS.FOLDER_FOR_DOWNLOADED_FILES, txtFolderForDownloadedFiles.getText());
+		if (chkScanDownloadedFiles.getSelection()) {
+			profileData.put(AntivirusConstants.PARAMETERS.SCAN_DOWNLOADED_FILES, Messages.getString(cmbContent[0]));
+			profileData.put(AntivirusConstants.PARAMETERS.FOLDER_FOR_DOWNLOADED_FILES,
+					txtFolderForDownloadedFiles.getText());
 		}
 		return profileData;
 	}
 
 	@Override
 	public void validateBeforeSave() throws ValidationException {
-		 if((chkScannedFolders.getSelection() && (txtScannedFolders.getText()
-		 == null || txtScannedFolders.getText().isEmpty())) ||
-		 (txtFolderForDownloadedFiles.isEnabled() &&
-		 (txtFolderForDownloadedFiles.getText() == null ||
-		 txtFolderForDownloadedFiles.getText().isEmpty()))){
-			 throw new ValidationException(Messages.getString("FILL_SELECTED_FIELDS"));
-		 }
+		if ((chkScannedFolders.getSelection()
+				&& (txtScannedFolders.getText() == null || txtScannedFolders.getText().isEmpty()))
+				|| (txtFolderForDownloadedFiles.isEnabled() && (txtFolderForDownloadedFiles.getText() == null
+						|| txtFolderForDownloadedFiles.getText().isEmpty()))) {
+			throw new ValidationException(Messages.getString("FILL_SELECTED_FIELDS"));
+		}
 	}
 
 	private boolean selectOption(Combo combo, Object value) {

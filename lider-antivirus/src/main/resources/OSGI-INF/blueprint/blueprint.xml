@@ -36,8 +36,22 @@
 	</bean>
 
 	<!-- ICommand implementation is used to process a task execution -->
+	<service ref="AntivirusConfigurationCommand" interface="tr.org.liderahenk.lider.core.api.plugin.ICommand" />
+	<bean id="AntivirusConfigurationCommand" class="tr.org.liderahenk.antivirus.commands.AntivirusConfigurationCommand">
+		<property name="resultFactory" ref="resultFactory" />
+		<property name="pluginInfo" ref="pluginInfoImpl" />
+	</bean>
+
+	<!-- ICommand implementation is used to process a task execution -->
 	<service ref="AntivirusCommand" interface="tr.org.liderahenk.lider.core.api.plugin.ICommand" />
 	<bean id="AntivirusCommand" class="tr.org.liderahenk.antivirus.commands.AntivirusCommand">
+		<property name="resultFactory" ref="resultFactory" />
+		<property name="pluginInfo" ref="pluginInfoImpl" />
+	</bean>
+
+	<!-- ICommand implementation is used to process a task execution -->
+	<service ref="AntivirusChangeConfigurationCommand" interface="tr.org.liderahenk.lider.core.api.plugin.ICommand" />
+	<bean id="AntivirusChangeConfigurationCommand" class="tr.org.liderahenk.antivirus.commands.AntivirusChangeConfigurationCommand">
 		<property name="resultFactory" ref="resultFactory" />
 		<property name="pluginInfo" ref="pluginInfoImpl" />
 	</bean>
