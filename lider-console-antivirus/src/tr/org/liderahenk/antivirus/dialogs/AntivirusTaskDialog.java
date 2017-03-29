@@ -44,7 +44,7 @@ public class AntivirusTaskDialog extends DefaultTaskDialog {
 
 		final Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout(2, false));
-		GridData  gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+		GridData  gd = new GridData(SWT.LEFT, SWT.CENTER, false, false);
 		 gd.widthHint = SWT.DEFAULT;
 		 gd.heightHint = SWT.DEFAULT;
 		composite.setLayoutData( gd);
@@ -55,7 +55,10 @@ public class AntivirusTaskDialog extends DefaultTaskDialog {
 		lblFolderPath.setText(Messages.getString("FOLDER_PATH"));
 		
 		txtFolderPath = new Text(composite, SWT.BORDER);
-		txtFolderPath.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		GridData gd_txtFolderPath = new GridData(SWT.NONE, SWT.LEFT, true, false);
+		gd_txtFolderPath.widthHint = 434;
+		txtFolderPath.setLayoutData(gd_txtFolderPath);
+		txtFolderPath.setFocus();
 
 		final Composite desciptionComposite = new Composite(parent, SWT.NONE);
 		desciptionComposite.setLayout(new GridLayout(1, false));
