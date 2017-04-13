@@ -26,6 +26,12 @@ Require-Bundle: javax.inject;bundle-version="1.0.0",
  org.slf4j.api,
  tr.org.liderahenk.liderconsole.core,
  org.codehaus.jackson.core,
- org.codehaus.jackson.mapper
+ org.codehaus.jackson.mapper,
+ org.eclipse.core.databinding,
+ org.eclipse.core.databinding.beans,
+ org.eclipse.core.databinding.observable,
+ org.eclipse.core.databinding.property,
+ org.eclipse.jface.databinding,
+ com.ibm.icu
 Bundle-Vendor: Agem Bilişim
 Bundle-Name: Lider Ahenk Antivirus Plugin

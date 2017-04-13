@@ -22,8 +22,13 @@ import tr.org.liderahenk.liderconsole.core.dialogs.IProfileDialog;
 import tr.org.liderahenk.liderconsole.core.exceptions.ValidationException;
 import tr.org.liderahenk.liderconsole.core.model.Profile;
 import tr.org.liderahenk.antivirus.i18n.Messages;
+import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.core.databinding.beans.PojoProperties;
 
 public class AntivirusProfileDialog implements IProfileDialog {
+	private DataBindingContext m_bindingContext;
 
 	private static final Logger logger = LoggerFactory.getLogger(AntivirusProfileDialog.class);
 	private Button chkIsRunning;
@@ -46,6 +51,9 @@ public class AntivirusProfileDialog implements IProfileDialog {
 	public void init() {
 	}
 
+	/**
+	 * @wbp.parser.entryPoint
+	 */
 	@Override
 	public void createDialogArea(Composite parent, Profile profile) {
 		logger.debug("Profile recieved: {}", profile != null ? profile.toString() : null);
@@ -263,22 +271,23 @@ public class AntivirusProfileDialog implements IProfileDialog {
 			}
 		});
 
-		new Label(composite, SWT.NONE);
-
 		if (profile != null && profile.getProfileData() != null
 				&& profile.getProfileData().get(AntivirusConstants.PARAMETERS.SCAN_DOWNLOADED_FILES) != null) {
 			chkScanDownloadedFiles.setSelection(true);
 			// cmbScanDownloadedFiles.setEnabled(true);
+;
 		} else {
 			chkScanDownloadedFiles.setSelection(false);
 			// cmbScanDownloadedFiles.setEnabled(false);
 		}
-
-		lblFolderForDownloadedFiles = new Label(composite, SWT.NONE);
-		lblFolderForDownloadedFiles.setText(Messages.getString("FILE_FOR_DOWNLOADED_FILES"));
-
-		txtFolderForDownloadedFiles = new Text(composite, SWT.BORDER);
-		txtFolderForDownloadedFiles.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+				new Label(composite, SWT.NONE);
+				
+						lblFolderForDownloadedFiles = new Label(composite, SWT.NONE);
+						lblFolderForDownloadedFiles.setText(Messages.getString("FILE_FOR_DOWNLOADED_FILES"));
+						
+								txtFolderForDownloadedFiles = new Text(composite, SWT.BORDER);
+								txtFolderForDownloadedFiles.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+								txtFolderForDownloadedFiles.setText(Messages.getString("DOWNLOAD_PATH"));
 		if (profile != null && profile.getProfileData() != null
 				&& profile.getProfileData().get(AntivirusConstants.PARAMETERS.FOLDER_FOR_DOWNLOADED_FILES) != null) {
 			txtFolderForDownloadedFiles.setText(
@@ -287,9 +296,11 @@ public class AntivirusProfileDialog implements IProfileDialog {
 		} else {
 			txtFolderForDownloadedFiles.setEnabled(false);
 		}
-
+		
 		lblForDescription = new Label(parent, SWT.NONE);
 		lblForDescription.setText(Messages.getString("FOLDER_PATH_DESCRIPTION"));
+		m_bindingContext = initDataBindings();
+		
 	}
 
 	@Override
@@ -311,9 +322,11 @@ public class AntivirusProfileDialog implements IProfileDialog {
 			profileData.put(AntivirusConstants.PARAMETERS.FOLDER_FOR_DOWNLOADED_FILES,
 					txtFolderForDownloadedFiles.getText());
 		}
+		
 		return profileData;
+		
 	}
-
+		
 	@Override
 	public void validateBeforeSave() throws ValidationException {
 		if ((chkScannedFolders.getSelection()
@@ -342,5 +355,9 @@ public class AntivirusProfileDialog implements IProfileDialog {
 		combo.select(0); // select first option by default.
 		return false;
 	}
-
+	protected DataBindingContext initDataBindings() {
+		DataBindingContext bindingContext = new DataBindingContext();
+		//
+		return bindingContext;
+	}
 }
