@@ -199,4 +199,14 @@
   		<policyItem label="%command.profile" pluginName="antivirus" pluginVersion="1.0.0" profileCommandId="tr.org.liderahenk.liderconsole.commands.AntivirusProfile" />
   	</extension>
   	
+  	
+  	<extension
+  		point="tr.org.liderahenk.liderconsole.core.taskmenu">
+  		<taskItem label="%command.task" pluginName="antivirus" pluginVersion="1.0.0" taskCommandId="tr.org.liderahenk.liderconsole.commands.AntivirusTask" />
+  	</extension>
+  	<extension
+  		point="tr.org.liderahenk.liderconsole.core.taskmenu">
+  		<taskItem label="%command.configuration.task" pluginName="antivirus" pluginVersion="1.0.0" taskCommandId="tr.org.liderahenk.liderconsole.commands.AntivirusConfigurationTask" />
+  	</extension>
+  	
 </plugin>

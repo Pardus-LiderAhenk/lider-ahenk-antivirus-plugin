@@ -15,29 +15,35 @@ import tr.org.liderahenk.antivirus.dialogs.AntivirusProfileDialog;
 import tr.org.liderahenk.antivirus.i18n.Messages;
 import tr.org.liderahenk.liderconsole.core.constants.LiderConstants;
 import tr.org.liderahenk.liderconsole.core.editorinput.ProfileEditorInput;
+import tr.org.liderahenk.liderconsole.core.handlers.LiderAbstractHandler;
 
 /**
  * Profile definition handler for antivirus plugin.
  *
  */
-public class AntivirusProfileHandler extends AbstractHandler {
+public class AntivirusProfileHandler extends LiderAbstractHandler {
 
 	private Logger logger = LoggerFactory.getLogger(AntivirusProfileHandler.class);
 
-	public Object execute(ExecutionEvent event) throws ExecutionException {
-		
-		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
-        IWorkbenchPage page = window.getActivePage();
-        
-        try {
-			page.openEditor(new ProfileEditorInput(Messages.getString("Antivirus"), AntivirusConstants.PLUGIN_NAME, 
-					AntivirusConstants.PLUGIN_VERSION, new AntivirusProfileDialog()), 
-					LiderConstants.EDITORS.PROFILE_EDITOR);
-		} catch (PartInitException e) {
-			logger.error(e.getMessage(), e);
-		}
-
-        return null;
+//	public Object execute(ExecutionEvent event) throws ExecutionException {
+//		
+//		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
+//        IWorkbenchPage page = window.getActivePage();
+//        
+//        try {
+//			page.openEditor(new ProfileEditorInput(Messages.getString("Antivirus"), AntivirusConstants.PLUGIN_NAME, 
+//					AntivirusConstants.PLUGIN_VERSION, new AntivirusProfileDialog()), 
+//					LiderConstants.EDITORS.PROFILE_EDITOR);
+//		} catch (PartInitException e) {
+//			logger.error(e.getMessage(), e);
+//		}
+//
+//        return null;
+//	}
+	
+	@Override
+	public ProfileEditorInput getEditorInput() {
+		return new ProfileEditorInput(Messages.getString("Antivirus"), AntivirusConstants.PLUGIN_NAME,	AntivirusConstants.PLUGIN_VERSION, new AntivirusProfileDialog());
 	}
 
 }
