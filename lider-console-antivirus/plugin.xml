@@ -202,11 +202,11 @@
   	
   	<extension
   		point="tr.org.liderahenk.liderconsole.core.taskmenu">
-  		<taskItem label="%command.task" pluginName="antivirus" pluginVersion="1.0.0" taskCommandId="tr.org.liderahenk.liderconsole.commands.AntivirusTask" />
+  		<taskItem label="%command.task" pluginName="antivirus" pluginVersion="1.0.0" taskCommandId="tr.org.liderahenk.liderconsole.commands.AntivirusTask" selectionType="multi" />
   	</extension>
   	<extension
   		point="tr.org.liderahenk.liderconsole.core.taskmenu">
-  		<taskItem label="%command.configuration.task" pluginName="antivirus" pluginVersion="1.0.0" taskCommandId="tr.org.liderahenk.liderconsole.commands.AntivirusConfigurationTask" />
+  		<taskItem label="%command.configuration.task" pluginName="antivirus" pluginVersion="1.0.0" taskCommandId="tr.org.liderahenk.liderconsole.commands.AntivirusConfigurationTask" selectionType="multi" />
   	</extension>
   	
 </plugin>
