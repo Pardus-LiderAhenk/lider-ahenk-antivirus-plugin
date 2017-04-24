@@ -203,17 +203,17 @@
   	
   	<extension
   		point="tr.org.liderahenk.liderconsole.core.taskmenu">
-  		<taskItem label="%command.task" pluginName="antivirus" pluginVersion="1.0.0" taskCommandId="tr.org.liderahenk.liderconsole.commands.AntivirusTask" selectionType="multi" description="Ahenk makinesinde/lerinde anlık olarak virüs taraması yapmasını sağlamaktadır.&#xA;Anlık tarama yapmak için tıklayınız.."/>
+  		<taskItem label="%command.task" pluginName="antivirus" pluginVersion="1.0.0" taskCommandId="tr.org.liderahenk.liderconsole.commands.AntivirusTask" selectionType="multi" description="Ahenk makinesinde/lerinde anlık olarak virüs taraması yapmasını sağlamaktadır.&#xA;Anlık tarama yapmak için tıklayınız.." imagePath="antivirus.png" />
   	</extension>
   	
   	<extension
   		point="tr.org.liderahenk.liderconsole.core.taskmenu">
-  		<taskItem label="%command.configuration.task" pluginName="antivirus" pluginVersion="1.0.0" taskCommandId="tr.org.liderahenk.liderconsole.commands.AntivirusConfigurationTask" description="Clamav antivirüs programının konfigürasyonunu düzenlemeyi sağlayan eklentidir.&#xA;Konfigürasyonu düzenlemek için tıklayınız.."/>
+  		<taskItem label="%command.configuration.task" pluginName="antivirus" pluginVersion="1.0.0" taskCommandId="tr.org.liderahenk.liderconsole.commands.AntivirusConfigurationTask" description="Clamav antivirüs programının konfigürasyonunu düzenlemeyi sağlayan eklentidir.&#xA;Konfigürasyonu düzenlemek için tıklayınız.." imagePath="antivirus.png"/>
   	</extension>
   	
   		<extension
   		point="tr.org.liderahenk.liderconsole.core.taskmenu">
-  		<taskItem label="%command.version.task" pluginName="antivirus" pluginVersion="1.0.0" taskCommandId="tr.org.liderahenk.liderconsole.commands.AntivirusVersionTask" description="Ahenk makinesi üzerinde çalışmakta olan 'clamav' antivirüs programının mevcut sürümü hakkında bilgi vermektedir.&#xA;Antivirüs sürümü hakkında bilgi almak için tıklayınız.." />
+  		<taskItem label="%command.version.task" pluginName="antivirus" pluginVersion="1.0.0" taskCommandId="tr.org.liderahenk.liderconsole.commands.AntivirusVersionTask" description="Ahenk makinesi üzerinde çalışmakta olan 'clamav' antivirüs programının mevcut sürümü hakkında bilgi vermektedir.&#xA;Antivirüs sürümü hakkında bilgi almak için tıklayınız.." imagePath="antivirus.png"/>
   	</extension>
   	
 </plugin>
