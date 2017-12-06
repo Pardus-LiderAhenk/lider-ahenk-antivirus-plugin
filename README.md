@@ -33,7 +33,7 @@ antivirus plugin for [Lider Ahenk project](http://www.liderahenk.org.tr).
 
 #### Ahenk
 
-1. Create a soft link for _ahenk-antivirus/antivirus_ directory via `sudo ln -s lider-ahenk-antivirus-plugin/ahenk-antivirus/antivirus/ /opt/ahenk/plugins`
+1. Create a soft link for _ahenk-antivirus/antivirus_ directory via `sudo ln -s lider-ahenk-antivirus-plugin/ahenk-antivirus/antivirus/ /usr/share/ahenk/plugins`
 
 ## Contribution
 

@@ -12,7 +12,7 @@ class AntivirusVersion(AbstractPlugin):
         self.data = data
         self.context = context
         self.logger = self.get_logger()
-        self.script_file_path = '/opt/ahenk/plugins/antivirus/scripts/'
+        self.script_file_path = '/usr/share/ahenk/plugins/antivirus/scripts/'
         self.message_code = self.get_message_code()
 
     def handle_task(self):
