@@ -5,7 +5,7 @@
 def info():
     inf = dict()
     inf['name'] = 'antivirus'
-    inf['version'] = '1.0.0'
+    inf['version'] = '1.1'
     inf['support'] = 'debian'
     inf['description'] = 'Antivirus plugin installs and manages antivirus configuration'
     inf['task'] = True
